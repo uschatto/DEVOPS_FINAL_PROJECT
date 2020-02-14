@@ -1,0 +1,14 @@
+{
+  "name": "pipeline",
+  "version": "1.0.0",
+  "description": "Template for DevOps Milestone 1.",
+  "main": "index.js",
+  "bin": "index.js",
+  "scripts": {},
+  "author": "kcshah",
+  "license": "ISC",
+  "dependencies": {
+    "chalk": "^3.0.0",
+    "yargs": "^15.1.0"
+  }
+}
