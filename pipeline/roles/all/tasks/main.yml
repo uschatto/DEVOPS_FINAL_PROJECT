@@ -1,0 +1,143 @@
+---
+- name: Define java_packages.
+  set_fact:
+    java_packages: "{{ __java_packages | list }}"
+  when: java_packages is not defined
+
+- name: Ensure 'man' directory exists.
+  become: yes
+  file:
+    path: /usr/share/man/man1
+    state: directory
+    recurse: true
+  when:
+    - ansible_distribution == 'Ubuntu'
+    - ansible_distribution_version == '18.04'
+
+- name: Ensure Java is installed.
+  become: yes
+  apt:
+    name: "{{ java_packages }}"
+    state: present
+
+- name: Set JAVA_HOME if configured.
+  become: yes
+  template:
+    src: java_home.sh.j2
+    dest: /etc/profile.d/java_home.sh
+    mode: 0644
+  when: java_home is defined and java_home
+
+  ###########################################
+- name: Adding Apt Key For Jenkins
+  become: yes
+  apt_key:
+    url: "https://jenkins-ci.org/debian/jenkins-ci.org.key"
+    state: present
+    validate_certs: no
+
+- name: Check For Jenkins List    
+  stat: path=/etc/apt/sources.list.d/jenkins.list
+  register: jenkins_list
+
+- name: Adding Jenkins Source List
+  become: yes
+  lineinfile:
+    path: /etc/apt/sources.list.d/jenkins.list
+    line: deb http://pkg.jenkins.io/debian-stable binary/
+    create: yes
+  when: not jenkins_list.stat.exists
+
+- name: Installing Jenkins
+  become: yes
+  apt:
+    name: jenkins     
+    state: present
+    update_cache: yes
+  register: jenkins_install
+
+- name: Replace a localhost entry with our own
+  become: yes
+  lineinfile:
+    path: /etc/default/jenkins
+    regexp: 'HTTP_PORT=8080'
+    line: HTTP_PORT=9000
+    owner: root
+    group: root
+    mode: '0644'
+
+- name: Restarting Jenkins
+  become: yes
+  service:
+    name: jenkins
+    state: restarted
+  when: jenkins_install.changed
+
+- name: "Wait For Jenkins To Come Up"
+  uri:
+    url: "{{jenkins_url}}"
+    status_code: 403
+  register: result
+  until: result.status == 403
+  retries: 6
+  delay: 15
+  when: jenkins_install.changed
+
+- name: Creating Directory For Groovy Script - Jenkins
+  become: true
+  file:
+    path: "{{jenkins_path}}/init.groovy.d"
+    state: directory
+    mode: 0755
+    owner: jenkins
+
+- name: Copying Groovy Script For Deafult Jenkins User Creation
+  become: true
+  template:
+    force: yes
+    src: "templates/jenkins_script.groovy"
+    dest: "{{jenkins_path}}/init.groovy.d/basic-security.groovy"
+    mode: 0755
+    owner: jenkins
+  register: groovy_dir
+
+- name: Restarting Jenkins
+  become: yes
+  service:
+    name: jenkins
+    state: restarted
+  when: groovy_dir.changed
+
+- name: "Wait For Jenkins To Come Up"
+  uri:
+    url: "{{jenkins_url}}/cli/"
+    status_code: 403
+  register: result
+  until: result.status == 403
+  retries: 6
+  delay: 15
+  when: groovy_dir.changed
+
+- name: Removing Groovy Script
+  become: true
+  become_user: jenkins
+  file:
+    path: "{{jenkins_path}}/init.groovy.d/basic-security.groovy"
+    state: absent
+
+- name: Restarting Jenkins
+  become: yes
+  service:
+    name: jenkins
+    state: restarted
+  when: groovy_dir.changed
+
+- name: "Wait For Jenkins To Come Up"
+  uri:
+    url: "{{jenkins_url}}/cli/"
+    status_code: 403
+  register: result
+  until: result.status == 403
+  retries: 6
+  delay: 15
+  when: groovy_dir.changed 

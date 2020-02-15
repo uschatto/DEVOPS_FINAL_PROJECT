@@ -1,0 +1,8 @@
+---
+__java_packages:
+  - openjdk-11-jdk
+##############################
+jenkins_user: admin
+jenkins_password: admin
+jenkins_path: /var/lib/jenkins
+jenkins_url: http://localhost:9000
