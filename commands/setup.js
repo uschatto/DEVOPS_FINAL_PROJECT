@@ -2,6 +2,7 @@ const child = require('child_process');
 const chalk = require('chalk');
 const path = require('path');
 const os = require('os');
+const fs = require('fs');
 
 const scpSync = require('../lib/scp');
 const sshSync = require('../lib/ssh');
@@ -73,6 +74,6 @@ async function run(privateKey, file, inventory) {
     let inventoryPath = '/bakerx/' +inventory;
 
     console.log(chalk.blueBright('Running ansible script...'));
-    result = sshSync(`/bakerx/pipeline/run-ansible.sh ${filePath} ${inventoryPath}`, 'vagrant@192.168.33.10');
+    result = sshSync(`/bakerx/pipeline/run-ansible.sh ${filePath} ${inventoryPath}`, 'vagrant@192.168.33.11');
     if( result.error ) { process.exit( result.status ); }
 }
