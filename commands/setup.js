@@ -64,6 +64,12 @@ async function run(privateKey, file, inventory) {
     result = scpSync (identifyFile, 'vagrant@192.168.33.11:/home/vagrant/.ssh/mm_rsa');
     if( result.error ) { console.log(result.error); process.exit( result.status ); }
 
+    result = sshSync('chmod +x /bakerx/pipeline/server-init.sh', 'vagrant@192.168.33.11');
+    if( result.error ) { console.log(result.error); process.exit( result.status ); }
+    
+    result = sshSync('chmod +x /bakerx/pipeline/run-ansible.sh', 'vagrant@192.168.33.11');
+    if( result.error ) { console.log(result.error); process.exit( result.status ); }
+    
     console.log(chalk.blueBright('Running init script...'));
     result = sshSync('/bakerx/pipeline/server-init.sh', 'vagrant@192.168.33.11');
     if( result.error ) { console.log(result.error); process.exit( result.status ); }
