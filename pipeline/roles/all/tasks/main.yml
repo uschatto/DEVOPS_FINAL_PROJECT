@@ -73,6 +73,14 @@
     state: restarted
   when: jenkins_install.changed
 
+- name: Turn off Jenkins setup wizard
+  become: yes
+  lineinfile:
+    dest: /etc/default/jenkins
+    regexp: '^JAVA_ARGS='
+    line: 'JAVA_ARGS="-Djava.awt.headless=true -Djenkins.install.runSetupWizard=false"'
+    insertbefore: '^DAEMON_ARGS='
+
 - name: "Wait For Jenkins To Come Up"
   uri:
     url: "{{jenkins_url}}"
@@ -113,7 +121,7 @@
     url: "{{jenkins_url}}/cli/"
     status_code: 403
   register: result
-  until: result.status == 403
+  until: result.status == 200
   retries: 6
   delay: 15
   when: groovy_dir.changed
