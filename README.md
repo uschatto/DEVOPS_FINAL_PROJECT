@@ -20,6 +20,6 @@ Udita Chattopadhyay (uschatto)
 | Setting up the pre-requisites for installing jenkins server (java,jenkins) | Completed | https://github.ncsu.edu/cscdevops-spring2020/DEVOPS-16/projects/1#card-18604
 | Turning off jenkins setup wizard through automation script | Completed | https://github.ncsu.edu/cscdevops-spring2020/DEVOPS-16/projects/1#card-18605
 | Update the turning off jenkins setup wizard for getting the login page only after logout and not display the builds | Completed | https://github.ncsu.edu/cscdevops-spring2020/DEVOPS-16/projects/1#card-18916
-| Install nodejs dependency for checkbox.io | Review | https://github.ncsu.edu/cscdevops-spring2020/DEVOPS-16/projects/1#card-18877
+| Install nodejs dependency for checkbox.io | Completed | https://github.ncsu.edu/cscdevops-spring2020/DEVOPS-16/projects/1#card-18877
 | Install mongodb dependency for checkbox.io | In Progress | https://github.ncsu.edu/cscdevops-spring2020/DEVOPS-16/projects/1#card-18879
 | Create a mongodb user and password with read write roles | In Progress | https://github.ncsu.edu/cscdevops-spring2020/DEVOPS-16/projects/1#card-18915
