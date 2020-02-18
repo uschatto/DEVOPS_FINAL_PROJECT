@@ -6,6 +6,7 @@
   roles:
     - ping
     - ubuntu
-    - all
+    - java
+    - jenkins
     - node
   
