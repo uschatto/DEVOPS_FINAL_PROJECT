@@ -119,9 +119,9 @@
 - name: "Wait For Jenkins To Come Up"
   uri:
     url: "{{jenkins_url}}/cli/"
-    status_code: 200
+    status_code: 403
   register: result
-  until: result.status == 200
+  until: result.status == 403
   retries: 6
   delay: 15
   when: groovy_dir.changed
@@ -143,9 +143,9 @@
 - name: "Wait For Jenkins To Come Up"
   uri:
     url: "{{jenkins_url}}/cli/"
-    status_code: 200
+    status_code: 403
   register: result
-  until: result.status == 200
+  until: result.status == 403
   retries: 6
   delay: 15
   when: groovy_dir.changed 
