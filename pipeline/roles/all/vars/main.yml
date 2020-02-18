@@ -6,3 +6,5 @@ jenkins_user: admin
 jenkins_password: admin
 jenkins_path: /var/lib/jenkins
 jenkins_url: http://localhost:9000
+nodejs_version: "10.x"
+ansible_distribution_release: "xenial" #trusty
