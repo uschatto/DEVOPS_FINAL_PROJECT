@@ -24,19 +24,25 @@ exports.builder = yargs => {
             describe: 'Provide the path to the inventory file',
             type: 'string',
             default: 'pipeline/inventory.ini'
+        },
+        vaultpass: {
+            alias: 'vp',
+            describe: 'the password to use for ansible vault',
+            default: 'DEVOPS16',
+            type: 'string'
         }
     });
 };
 
 
 exports.handler = async argv => {
-    const { privateKey, file, inventory } = argv;
+    const { privateKey, file, inventory, vaultpass } = argv;
 
     (async () => {
 
         if (fs.existsSync(path.resolve(file)) && fs.existsSync(path.resolve(inventory))) 
         {
-             await run( privateKey, file, inventory );
+             await run( privateKey, file, inventory, vaultpass );
         }
         else
         {
@@ -47,7 +53,7 @@ exports.handler = async argv => {
 
 };
 
-async function run(privateKey, file, inventory) {
+async function run(privateKey, file, inventory, vaultpass) {
 
     console.log(chalk.greenBright('Installing configuration server!'));
 
@@ -79,7 +85,17 @@ async function run(privateKey, file, inventory) {
     let filePath = '/bakerx/'+ file;
     let inventoryPath = '/bakerx/' +inventory;
 
+    if(vaultpass)
+    {
+        console.log(chalk.bgCyan('Creating the vault password file on the configuration server in /tmp'));
+        result = sshSync (`"echo ${vaultpass} > /tmp/.vault_pass"`, 'vagrant@192.168.33.11');
+        result = sshSync("chmod '0600' /tmp/.vault_pass", 'vagrant@192.168.33.11');
+        if( result.error ) { console.log(result.error); process.exit( result.status ); }
+    }
+
+    let vaultPath = '/tmp/.vault_pass';
+
     console.log(chalk.blueBright('Running ansible script...'));
-    result = sshSync(`/bakerx/pipeline/run-ansible.sh ${filePath} ${inventoryPath}`, 'vagrant@192.168.33.11');
+    result = sshSync(`/bakerx/pipeline/run-ansible.sh ${filePath} ${inventoryPath} ${vaultPath}`, 'vagrant@192.168.33.11');
     if( result.error ) { process.exit( result.status ); }
 }
