@@ -1,0 +1,31 @@
+---
+#MongoDB
+
+#Import the MongoDB repository
+
+#Import the public key used by the package management system.
+- name: Import the public key used by the PMS
+  become: yes
+  apt_key:
+    url: "https://www.mongodb.org/static/pgp/server-{{ mongodb_version }}.asc"
+    state: present
+
+- name: Add MongoDB repository
+  become: yes
+  apt_repository: 
+    repo: "deb [arch=amd64] http://repo.mongodb.org/apt/ubuntu bionic/mongodb-org/{{ mongodb_version }} multiverse"
+    state: present
+    update_cache: yes
+
+- name: install mongodb
+  become: yes
+  apt: 
+    pkg: mongodb-org 
+    state: latest 
+    update_cache: yes
+
+# - name: start mongodb
+#   systemd: 
+#     name: mongod 
+#     state: started
+    

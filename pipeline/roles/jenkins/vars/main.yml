@@ -3,4 +3,5 @@ jenkins_password: admin
 jenkins_path: /var/lib/jenkins
 jenkins_url: http://localhost:9000
 nodejs_version: "10.x"
-ansible_distribution_release: "xenial" #trusty
+ansible_distribution_release: "bionic"
+mongodb_version: "4.2"
