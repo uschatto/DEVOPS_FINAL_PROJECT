@@ -3,11 +3,23 @@
 # https://docs.ansible.com/ansible/latest/user_guide/playbooks_best_practices.html
 
 - hosts: jenkins
+  vars_files:
+    vars.yaml
+
   roles:
-    - ping
-    - ubuntu
-    - java
-    - jenkins
-    - node
+   - ping
+   - ubuntu
+   - java
+   - jenkins
+   - node
     - mongodb
+    
+  environment:
+    environment:
+    APP_PORT: 3002
+    MONGO_PORT: 27012
+    MONGO_USER: "{{ mongo_user }}"
+    MONGO_PASSWORD: "{{ mongo_password }}"
+    MONGO_IP: localhost
+  
   
