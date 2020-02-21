@@ -1,0 +1,86 @@
+---
+- name: Set APP_PORT
+  become: yes
+  lineinfile:
+    path: /home/vagrant/.bashrc
+    regexp: 'export APP_PORT=3002'
+    line: export APP_PORT=3002
+    insertafter: BOF
+    state: present
+
+- name: Set MONGO_PORT
+  become: yes
+  lineinfile:
+    path: /home/vagrant/.bashrc
+    regexp: 'export MONGO_PORT=27012'
+    line: export MONGO_PORT=27012
+    insertafter: BOF
+    state: present
+
+- name: Set MONGO_USER
+  become: yes
+  lineinfile:
+    path: /home/vagrant/.bashrc
+    regexp: 'export MONGO_USER={{ mongo_user }}'
+    line: export MONGO_USER={{ mongo_user }}
+    insertafter: BOF
+    state: present
+
+- name: Set MONGO_PASS
+  become: yes
+  lineinfile:
+    path: /home/vagrant/.bashrc
+    regexp: 'export MONGO_PASS={{ mongo_password }}'
+    line: export MONGO_PASS={{ mongo_password }}
+    insertafter: BOF
+    state: present
+
+- name: Set MONGO_IP
+  lineinfile:
+    path: /home/vagrant/.bashrc
+    regexp: 'export MONGO_IP=localhost'
+    line: export MONGO_IP=localhost
+    insertafter: BOF
+    state: present 
+
+- name: Restart bashrc
+  become_user: vagrant
+  shell: source /home/vagrant/.bashrc
+  args:
+    executable: 
+      /bin/bash
+
+# - name: Display variable MONGO_IP
+#   shell: echo $MONGO_IP
+#   register: out
+
+# - debug:
+#     msg: "MONGO_IP: {{ out }}"
+
+# - name: Display variable MONGO_PORT
+#   shell: echo $MONGO_PORT
+#   register: out
+
+# - debug:
+#     msg: "MONGO_PORT: {{ out }}"
+
+# - name: Display variable APP_PORT
+#   shell: echo $APP_PORT
+#   register: out
+
+# - debug:
+#     msg: "APP_PORT: {{ out }}"
+
+# - name: Display variable MONGO_PASS
+#   shell: echo $MONGO_PASS
+#   register: out
+
+# - debug:
+#     msg: "MONGO_PASS: {{ out }}"
+
+# - name: Display variable MONGO_USER
+#   shell: echo $MONGO_USER
+#   register: out
+
+# - debug:
+#     msg: "MONGO_USER: {{ out }}"

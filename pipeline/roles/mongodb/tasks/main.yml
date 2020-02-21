@@ -23,7 +23,7 @@
     pkg: mongodb-org 
     state: latest 
     update_cache: yes
-
+  
 # - name: start mongodb
 #   systemd: 
 #     name: mongod 
