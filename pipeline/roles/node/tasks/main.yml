@@ -1,6 +1,5 @@
 ---
 #Node
-
 - name: Install the gpg key for nodejs LTS
   become: yes
   apt_key:
@@ -24,4 +23,4 @@
   become: yes
   apt:
     name: "nodejs={{ nodejs_version|regex_replace('x', '') }}*"
-    state: present   
+    state: present

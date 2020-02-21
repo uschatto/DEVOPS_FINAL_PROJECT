@@ -1,2 +1,2 @@
-nodejs_version: "10.x"
+nodejs_version: "13.x"
 ansible_distribution_release: "bionic"
