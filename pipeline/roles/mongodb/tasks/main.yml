@@ -17,15 +17,30 @@
     state: present
     update_cache: yes
 
-- name: install mongodb
+- name: install mongodb and python-pip
   become: yes
   apt: 
-    pkg: mongodb-org 
+    pkg: ['mongodb-org','python3-pip'] 
     state: latest 
     update_cache: yes
   
-# - name: start mongodb
-#   systemd: 
-#     name: mongod 
-#     state: started
-    
+- name: start mongodb
+  become: yes
+  systemd: 
+    name: mongod 
+    state: started
+
+- name: pip install pymongo
+  become: yes
+  pip:
+    name: pymongo
+    state: present
+
+- name: Creating user and password with readwrite roles
+  become: yes
+  mongodb_user:
+    database: admin
+    name: "{{ mongo_user }}"
+    password: "{{ mongo_password }}" 
+    state: present
+    roles: readWrite
