@@ -47,7 +47,7 @@
   lineinfile:
     dest: /etc/default/jenkins
     regexp: '^JAVA_ARGS='
-    line: 'JAVA_ARGS="-Djava.awt.headless=true -Djenkins.install.runSetupWizard=false"'
+    line: 'JAVA_ARGS="-Djava.awt.headless=true -Djenkins.install.runSetupWizard=false -Dhudson.security.csrf.DefaultCrumbIssuer.EXCLUDE_SESSION_ID=true"'
     insertbefore: '^DAEMON_ARGS='
 
 - name: "Wait For Jenkins To Come Up"
@@ -118,3 +118,33 @@
   retries: 6
   delay: 15
   when: groovy_dir.changed
+
+- name: Install build-pipeline plugin
+  become: true
+  #become_user: jenkins
+  jenkins_plugin:
+    name: build-pipeline-plugin
+    url_username: "{{jenkins_user}}"
+    url_password: "{{jenkins_password}}"
+    url: "{{jenkins_url}}"
+    state: latest
+  register: jenkins_plugin
+
+- name: Install pipeline plugin
+  become: true
+  #become_user: jenkins
+  jenkins_plugin:
+    name: workflow-aggregator
+    url_username: "{{jenkins_user}}"
+    url_password: "{{jenkins_password}}"
+    url: "{{jenkins_url}}"
+    state: latest
+  register: jenkins_plugin  
+
+- name: Restarting Jenkins
+  become: yes
+  service:
+    name: jenkins
+    state: restarted
+  when: jenkins_plugin.changed
+  
