@@ -1,0 +1,5 @@
+---
+- name: Cloning checkbox repository
+  git:
+    repo: "https://github.com/chrisparnin/checkbox.io"
+    dest: "{{checkbox_installation_path}}/checkbox.io"
