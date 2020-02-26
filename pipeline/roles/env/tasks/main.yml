@@ -1,51 +1,22 @@
 ---
-- name: Set APP_PORT
+- name: Set Environment variables
   become: yes
   lineinfile:
-    path: /home/vagrant/.bashrc
-    regexp: 'export APP_PORT=3002'
-    line: export APP_PORT=3002
-    insertafter: BOF
+    path: /etc/environment
+    regexp: \'"{{item}}"\'
+    line: "{{ item }}"
+    insertafter: EOF
     state: present
-
-- name: Set MONGO_PORT
-  become: yes
-  lineinfile:
-    path: /home/vagrant/.bashrc
-    regexp: 'export MONGO_PORT=27012'
-    line: export MONGO_PORT=27012
-    insertafter: BOF
-    state: present
-
-- name: Set MONGO_USER
-  become: yes
-  lineinfile:
-    path: /home/vagrant/.bashrc
-    regexp: 'export MONGO_USER={{ mongo_user }}'
-    line: export MONGO_USER={{ mongo_user }}
-    insertafter: BOF
-    state: present
-
-- name: Set MONGO_PASS
-  become: yes
-  lineinfile:
-    path: /home/vagrant/.bashrc
-    regexp: 'export MONGO_PASS={{ mongo_password }}'
-    line: export MONGO_PASS={{ mongo_password }}
-    insertafter: BOF
-    state: present
-
-- name: Set MONGO_IP
-  lineinfile:
-    path: /home/vagrant/.bashrc
-    regexp: 'export MONGO_IP=localhost'
-    line: export MONGO_IP=localhost
-    insertafter: BOF
-    state: present 
+  with_items: 
+    - export APP_PORT=3002
+    - export MONGO_USER={{ mongo_user }}
+    - MONGO_PASS={{ mongo_password }}
+    - export MONGO_IP=localhost
+    - export MONGO_PORT=27017
 
 - name: Restart bashrc
-  become_user: vagrant
-  shell: source /home/vagrant/.bashrc
+  become: yes 
+  shell: source /etc/environment
   args:
     executable: 
       /bin/bash

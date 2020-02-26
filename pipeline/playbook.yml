@@ -9,10 +9,10 @@
   roles:
     - ping
     - ubuntu
+    - env
     - java
     - jenkins
-    - node
+    - nodes
     - mongodb
-    - env
   
   

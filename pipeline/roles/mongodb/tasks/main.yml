@@ -24,8 +24,28 @@
     state: latest 
     update_cache: yes
   
-# - name: start mongodb
-#   systemd: 
-#     name: mongod 
-#     state: started
+- name: start mongodb
+  become: yes
+  systemd: 
+    name: mongod 
+    state: started
+
+- name: Install pip
+  become: yes
+  apt:
+    name: python3-pip
+    state: present
+
+- name: Install pymongo
+  pip:
+    name: pymongo
+    
+- name: Create mongo user
+  mongodb_user:
+    database: admin
+    name: "{{ mongo_user }}"
+    password: "{{ mongo_password }}"
+    roles: readWrite
+    state: present
+
     
