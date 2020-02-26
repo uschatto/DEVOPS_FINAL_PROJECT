@@ -12,7 +12,7 @@
     - env
     - java
     - jenkins
-    - nodes
+    - node
     - mongodb
   
   
