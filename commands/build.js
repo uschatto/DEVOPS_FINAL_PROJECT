@@ -6,9 +6,6 @@ const fs = require('fs');
 
 const sshSync = require('../lib/ssh');
 
-var args = process.argv.slice(2);
-var app = args.length == 2? args[1]: "checkbox.io";
-
 exports.command = 'build <app>';
 // Trigger a build job (named checkbox.io), wait for output, and print build log.
 exports.desc = 'Trigger a build job checkbox.io';
@@ -21,15 +18,15 @@ exports.builder = yargs => {
         }
     });
 };
-let file = "";
-if( app === "checkbox.io")
-{
-    file = "pipeline/checkboxio.yml"
-}
 
 exports.handler = async argv => {
-    const {inventory} = argv;
 
+    const {app, inventory} = argv;
+    let file = "";
+    if( app === "checkbox.io")
+    {
+        file = "pipeline/checkboxio.yml"
+    }
     (async () => {
 
         if (fs.existsSync(path.resolve(file)) && fs.existsSync(path.resolve(inventory))) {
