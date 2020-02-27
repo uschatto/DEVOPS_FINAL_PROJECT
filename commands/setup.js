@@ -46,7 +46,7 @@ exports.handler = async argv => {
         }
         else
         {
-             console.error(`File or inventory don't exist. Make sure to provide path from root of pipeline directory`);  
+             console.error(`'File or inventory dont exist. Make sure to provide path from root of pipeline directory'`);  
         }          
 
     })();
@@ -61,7 +61,7 @@ async function run(privateKey, file, inventory, vaultpass) {
     let result = child.spawnSync(`bakerx`, `run ansible-srv bionic --ip 192.168.33.11 --sync`.split(' '), {shell:true, stdio: 'inherit'} );
     if( result.error ) { console.log(result.error); process.exit( result.status ); }
 
-    console.log(chalk.blueBright('Provisioning mattermost server...'));
+    console.log(chalk.blueBright('Provisioning jenkins server...'));
     result = child.spawnSync(`bakerx`, `run jenkins-srv bionic --ip 192.168.33.20`.split(' '), {shell:true, stdio: 'inherit'} );
     if( result.error ) { console.log(result.error); process.exit( result.status ); }
 
