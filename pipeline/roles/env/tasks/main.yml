@@ -1,6 +1,7 @@
 ---
 - name: Set Environment variables
   become: yes
+  no_log: true
   lineinfile:
     path: /etc/environment
     regexp: \'"{{item}}"\'
@@ -20,38 +21,3 @@
   args:
     executable: 
       /bin/bash
-
-# - name: Display variable MONGO_IP
-#   shell: echo $MONGO_IP
-#   register: out
-
-# - debug:
-#     msg: "MONGO_IP: {{ out }}"
-
-# - name: Display variable MONGO_PORT
-#   shell: echo $MONGO_PORT
-#   register: out
-
-# - debug:
-#     msg: "MONGO_PORT: {{ out }}"
-
-# - name: Display variable APP_PORT
-#   shell: echo $APP_PORT
-#   register: out
-
-# - debug:
-#     msg: "APP_PORT: {{ out }}"
-
-# - name: Display variable MONGO_PASS
-#   shell: echo $MONGO_PASS
-#   register: out
-
-# - debug:
-#     msg: "MONGO_PASS: {{ out }}"
-
-# - name: Display variable MONGO_USER
-#   shell: echo $MONGO_USER
-#   register: out
-
-# - debug:
-#     msg: "MONGO_USER: {{ out }}"
