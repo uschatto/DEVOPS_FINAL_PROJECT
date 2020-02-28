@@ -119,27 +119,18 @@
   delay: 15
   when: groovy_dir.changed
 
-- name: Install build-pipeline plugin
-  become: true
-  #become_user: jenkins
+- name: Install pipeline plugins
+  become: yes 
   jenkins_plugin:
-    name: build-pipeline-plugin
+    name: "{{ item }}"
     url_username: "{{jenkins_user}}"
     url_password: "{{jenkins_password}}"
     url: "{{jenkins_url}}"
     state: latest
+  with_items:
+    - build-pipeline-plugin
+    - workflow-aggregator
   register: jenkins_plugin
-
-- name: Install pipeline plugin
-  become: true
-  #become_user: jenkins
-  jenkins_plugin:
-    name: workflow-aggregator
-    url_username: "{{jenkins_user}}"
-    url_password: "{{jenkins_password}}"
-    url: "{{jenkins_url}}"
-    state: latest
-  register: jenkins_plugin  
 
 - name: Restarting Jenkins
   become: yes
@@ -147,4 +138,69 @@
     name: jenkins
     state: restarted
   when: jenkins_plugin.changed
+
+- name: Check For Jenkins jobs configuration file 
+  stat: path=/home/vagrant/jenkins_jobs.ini
+  register: jenkins_jobs
+
+- name: Copy the jenkins job configuration file to the jenkins-srv
+  template:
+     src: /bakerx/pipeline/roles/jenkins/templates/jenkins_jobs.ini
+     dest: ~/jenkins_jobs.ini
+  when: not jenkins_jobs.stat.exists
   
+- name: Installing python3-pip
+  become: yes
+  apt: 
+     pkg: python3-pip
+     state: latest 
+     update_cache: yes 
+
+- name: Installing jenkins-job-builder
+  become: yes
+  pip:
+     name: jenkins-job-builder
+     state: present
+
+- name: Run shell command to check if password is already set in configuration file
+  become: yes
+  shell: cat /home/vagrant/jenkins_jobs.ini | grep password | wc -l
+  register: present
+ 
+- name: Get a valid crumb to use it for getting the Jenkins token
+  uri:
+     url: "{{ jenkins_url }}/crumbIssuer/api/json"
+     user: "{{ jenkins_user }}"
+     password: "{{ jenkins_password }}"
+     method: GET
+     force_basic_auth: yes
+  register: out
+  when: 'present.stdout == "0"'
+
+- name: Generating API token for Jenkins to be used by jenkins jobs
+  uri:
+     url: "{{ jenkins_url }}/me/descriptorByName/jenkins.security.ApiTokenProperty/generateNewToken"
+     user: "{{ jenkins_user }}"
+     password: "{{ jenkins_password }}"
+     method: POST
+     force_basic_auth: yes
+     body_format: json
+     body:
+        newTokenName: "DEVOPS"
+     headers:
+        Jenkins-Crumb: "{{ out.json.crumb }}"    
+  register: token
+  when: 'present.stdout == "0"'
+
+- name: Set the password to the Token value generated
+  become: yes
+  lineinfile:
+     path: /home/vagrant/jenkins_jobs.ini
+     insertafter: '^url' 
+     line: "password={{ token.json.data.tokenValue }}"
+  when: 'present.stdout == "0"'
+
+- name: Create a jobs folder
+  file:
+     path: ~/jobs
+     state: directory  
