@@ -207,3 +207,19 @@
   file:
      path: ~/jobs
      state: directory  
+
+- name: Add jenkins to sudoers group
+  become: yes
+  user:
+    name: jenkins
+    group: sudo
+
+- name: Allow jenkins to have passwordless sudo
+  become: yes
+  lineinfile:
+    dest: /etc/sudoers
+    state: present
+    regexp: '^jenkins'
+    line: 'jenkins ALL=(ALL) NOPASSWD: ALL'
+    insertafter: EOF
+    validate: visudo -cf %s
