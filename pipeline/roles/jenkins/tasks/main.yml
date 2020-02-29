@@ -130,6 +130,8 @@
   with_items:
     - build-pipeline-plugin
     - workflow-aggregator
+    - job-dsl
+    - git
   register: jenkins_plugin
 
 - name: Restarting Jenkins
