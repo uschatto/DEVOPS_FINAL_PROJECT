@@ -32,3 +32,21 @@
      headers:
         Jenkins-Crumb: "{{ out.json.crumb }}"
   ignore_errors: true
+
+- name: Get the next build number to print the build logs
+  shell: cat /var/lib/jenkins/jobs/Milestone1/nextBuildNumber 
+  register: buildnumber
+
+- name: Wait until the current build log file exists
+  stat: path=/var/lib/jenkins/jobs/Milestone1/builds/{{buildnumber.stdout}}/log
+  register: jenkins_build
+  until: jenkins_build.stat.exists
+  retries: 5
+
+- name: Print the build logs on console
+  shell: cat /var/lib/jenkins/jobs/Milestone1/builds/{{buildnumber.stdout}}/log
+  register: file
+  until: file.stdout.find("SUCCESS") != -1 or file.stdout.find("FAILURE") != -1
+
+- debug:
+    msg: "{{file}}"     
