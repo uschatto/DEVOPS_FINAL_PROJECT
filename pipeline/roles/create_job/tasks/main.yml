@@ -47,6 +47,8 @@
   shell: cat /var/lib/jenkins/jobs/Milestone1/builds/{{buildnumber.stdout}}/log
   register: file
   until: file.stdout.find("SUCCESS") != -1 or file.stdout.find("FAILURE") != -1
+  retries: 10
+  delay: 30
 
 - debug:
     msg: "{{file}}"     

@@ -132,6 +132,8 @@
     - workflow-aggregator
     - job-dsl
     - git
+    - ws-cleanup
+    - build-publisher
   register: jenkins_plugin
   ignore_errors: true
 

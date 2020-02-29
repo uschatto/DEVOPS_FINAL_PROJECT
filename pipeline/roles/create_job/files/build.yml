@@ -18,5 +18,8 @@
           }
           stage('Tear Down Services') {
               sh 'sudo systemctl stop mongod'
-          }
-      }
+              dir ('./Milestone1') {
+                 deleteDir()
+              }
+            }
+         }
