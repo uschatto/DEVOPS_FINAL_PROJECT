@@ -8,10 +8,15 @@
               git "https://github.com/chrisparnin/checkbox.io"
           }
           stage('Build') {
+              sh 'sudo systemctl start mongod'
               sh 'npm install --prefix server-side/site/'
-              sh 'cd server-side/site/ && node server.js &'
+              sh 'npm install --prefix server-side/site/ pm2 -g'
+              sh 'cd server-side/site/ && pm2 start server.js &'
           }
           stage('Test') {
               sh 'npm test --prefix server-side/site/'
+          }
+          stage('Tear Down Services') {
+              sh 'sudo systemctl stop mongod'
           }
       }
