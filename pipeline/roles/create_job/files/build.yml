@@ -1,0 +1,18 @@
+---
+- job:
+    name: test-pipeline
+    project-type: pipeline
+    dsl: |
+      node {
+          stage('Source') {
+              git "https://github.com/chrisparnin/checkbox.io"
+          }
+          stage('Build') {
+              sh 'npm install --prefix server-side/site/'
+              sh 'cd server-side/site/ && node server.js &'
+          }
+          stage('Test') {
+              sh 'npm test --prefix server-side/site/'
+          }
+      }
+

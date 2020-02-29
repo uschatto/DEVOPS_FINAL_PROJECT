@@ -8,5 +8,6 @@
 
   roles:
     - checkbox
+    - create_job
   
   

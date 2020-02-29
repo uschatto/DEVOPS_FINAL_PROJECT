@@ -41,6 +41,6 @@
   mongodb_user:
     database: admin
     name: "{{ mongo_user }}"
-    password: "{{ mongo_password }}" 
+    password: "{{ mongo_password }}"
     state: present
     roles: readWrite

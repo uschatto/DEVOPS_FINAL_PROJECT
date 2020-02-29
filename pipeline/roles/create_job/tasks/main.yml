@@ -1,0 +1,11 @@
+---
+- name: Copy the build file
+  copy:
+    src: build.yml
+    dest: /home/vagrant/build.yml
+    remote_src: yes
+
+- name: Create a build job
+  become: yes
+  shell: jenkins-jobs --conf jenkins_jobs.ini update build.yml
+
