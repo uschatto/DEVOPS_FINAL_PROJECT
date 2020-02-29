@@ -1,6 +1,6 @@
 ---
 - job:
-    name: test-pipeline
+    name: Milestone1
     project-type: pipeline
     dsl: |
       node {
@@ -15,4 +15,3 @@
               sh 'npm test --prefix server-side/site/'
           }
       }
-

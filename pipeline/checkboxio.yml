@@ -7,7 +7,4 @@
     vars.yaml
 
   roles:
-    - checkbox
     - create_job
-  
-  

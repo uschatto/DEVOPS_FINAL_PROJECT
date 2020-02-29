@@ -3,9 +3,32 @@
   copy:
     src: build.yml
     dest: /home/vagrant/build.yml
-    remote_src: yes
 
 - name: Create a build job
   become: yes
-  shell: jenkins-jobs --conf jenkins_jobs.ini update build.yml
+  shell: jenkins-jobs --flush-cache --conf jenkins_jobs.ini update build.yml
 
+#Pause for few seconds to wait for the job to get created
+- pause:
+    seconds: 10
+
+- name: Get a valid crumb to use it for triggering the Jenkins build
+  uri:
+     url: "{{ jenkins_url }}/crumbIssuer/api/json"
+     user: "{{ jenkins_user }}"
+     password: "{{ jenkins_password }}"
+     method: GET
+     force_basic_auth: yes
+  register: out
+
+- name: Trigger jenkins build for Milestone1 pipeline job
+  uri:
+     url: "{{ jenkins_url }}/job/Milestone1/build"
+     user: "{{ jenkins_user }}"
+     password: "{{ jenkins_password }}"
+     method: POST
+     force_basic_auth: yes
+     body_format: json
+     headers:
+        Jenkins-Crumb: "{{ out.json.crumb }}"
+  ignore_errors: true

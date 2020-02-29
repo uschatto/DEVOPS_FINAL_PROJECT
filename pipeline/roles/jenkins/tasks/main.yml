@@ -133,6 +133,7 @@
     - job-dsl
     - git
   register: jenkins_plugin
+  ignore_errors: true
 
 - name: Restarting Jenkins
   become: yes
