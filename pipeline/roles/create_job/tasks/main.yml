@@ -43,16 +43,6 @@
   until: jenkins_build.stat.exists
   retries: 5
 
-# - name: Print the build logs on console
-#   shell: cat /var/lib/jenkins/jobs/Milestone1/builds/{{buildnumber.stdout}}/log
-#   register: file
-#   until: file.stdout.find("SUCCESS") != -1 or file.stdout.find("FAILURE") != -1
-#   retries: 10
-#   delay: 30
-
-# - debug:
-#     msg: "{{file}}"     
-
 - name: Console Text Log
   uri:
      url: "{{ jenkins_url }}/job/Milestone1/{{buildnumber.stdout}}/consoleText"
