@@ -10,7 +10,7 @@
           stage('Build') {
               sh 'sudo systemctl start mongod'
               sh 'npm install --prefix server-side/site/'
-              sh 'npm install --prefix server-side/site/ pm2 -g'
+              sh 'sudo npm install pm2 -g'
               sh 'cd server-side/site/ && pm2 start server.js &'
           }
           stage('Test') {
