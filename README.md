@@ -29,3 +29,9 @@ Udita Chattopadhyay (uschatto)
 - This command creates a pipeline project type job on Jenkins via jenkins-job command.
 - After which we trigger the build job via REST API.
 - Finally we wait for the build to finish and show it on the console via REST API.
+
+## Pipeline Project: Milestone1
+
+<p align="center">
+<img src ="https://github.ncsu.edu/cscdevops-spring2020/DEVOPS-16/blob/Milestone1/img/pipeline.png" width="800" height="350">
+</p>
