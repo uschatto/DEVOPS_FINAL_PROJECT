@@ -33,5 +33,5 @@ Udita Chattopadhyay (uschatto)
 ## Pipeline Project: Milestone1
 
 <p align="center">
-<img src ="https://github.ncsu.edu/cscdevops-spring2020/DEVOPS-16/blob/Milestone1/img/pipeline.png" width="800" height="350">
+<img src ="https://github.ncsu.edu/cscdevops-spring2020/DEVOPS-16/blob/M1/img/pipeline.png" width="800" height="350">
 </p>
