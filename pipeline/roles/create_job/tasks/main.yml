@@ -2,7 +2,7 @@
 - name: Copy the build file
   copy:
     src: build.yml
-    dest: ~/build.yml
+    dest: /home/vagrant/build.yml
 
 - name: Create a build job
   become: yes
@@ -12,3 +12,49 @@
 - pause:
     seconds: 10
 
+- name: Get a valid crumb to use it for triggering the Jenkins build
+  uri:
+     url: "{{ jenkins_url }}/crumbIssuer/api/json"
+     user: "{{ jenkins_user }}"
+     password: "{{ jenkins_password }}"
+     method: GET
+     force_basic_auth: yes
+  register: out
+
+- name: Trigger jenkins build for Milestone1 pipeline job
+  uri:
+     url: "{{ jenkins_url }}/job/Milestone1/build"
+     user: "{{ jenkins_user }}"
+     password: "{{ jenkins_password }}"
+     method: POST
+     force_basic_auth: yes
+     body_format: json
+     headers:
+        Jenkins-Crumb: "{{ out.json.crumb }}"
+  ignore_errors: true
+
+- name: Get the next build number to print the build logs
+  shell: cat /var/lib/jenkins/jobs/Milestone1/nextBuildNumber 
+  register: buildnumber
+
+- name: Wait until the current build log file exists
+  stat: path=/var/lib/jenkins/jobs/Milestone1/builds/{{buildnumber.stdout}}/log
+  register: jenkins_build
+  until: jenkins_build.stat.exists
+  retries: 5
+
+- name: Console Text Log
+  uri:
+     url: "{{ jenkins_url }}/job/Milestone1/{{buildnumber.stdout}}/consoleText"
+     user: "{{ jenkins_user }}"
+     password: "{{ jenkins_password }}"
+     method: GET
+     force_basic_auth: yes
+     return_content: yes
+  register: out
+  until: out.content.find("SUCCESS") != -1 or out.content.find("FAILURE") != -1
+  retries: 10
+  delay: 30
+
+- debug:
+    msg: "{{out.content.split('\n')}}"  
