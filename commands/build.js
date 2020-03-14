@@ -4,6 +4,10 @@ const path = require('path');
 const os = require('os');
 const fs = require('fs');
 
+require('dotenv').config()
+let url = "http://" + process.env.JENKINS_USER + ":" + process.env.JENKINS_PASS + "@" + process.env.JENKINS_URL
+const jenkins = require('jenkins')({ baseUrl : url, crumbIssuer: true, promisify: true });
+
 const sshSync = require('../lib/ssh');
 
 exports.command = 'build <app>';
@@ -11,47 +15,66 @@ exports.command = 'build <app>';
 exports.desc = 'Trigger a build job checkbox.io';
 exports.builder = yargs => {
     yargs.options({
-        inventory: {
-            describe: 'Provide the path to the inventory file',
-            type: 'string',
-            default: 'pipeline/inventory.ini'
-        }
     });
 };
 
 exports.handler = async argv => {
-
-    const {app, inventory} = argv;
-    let file = "";
-    if( app === "checkbox.io")
-    {
-        file = "pipeline/checkboxio.yml"
-    }
+    const {} = argv;
     (async () => {
-
-        if (fs.existsSync(path.resolve(file)) && fs.existsSync(path.resolve(inventory))) {
-            await run(file, inventory);
-        }
-
-        else {
-            console.error(`File or inventory don't exist. Make sure to provide path from root of cm directory`);
-        }
-
+            await run();
     })();
-
 };
+
+async function waitOnQueue(id) {
+    return new Promise(function(resolve,reject)
+    {
+          jenkins.queue.item(id, function(err,item) {
+		if(err) throw err;
+		if(item.executable) {
+			console.log("number:",item.executable.number);
+			resolve(item.executable.number);
+		}
+		else if (item.cancelled)
+		{
+			console.log("cancelled");
+			reject("cancelled");
+		}
+		else {
+			setTimeout(async function() {
+				resolve(await waitOnQueue(id));
+			}, 5000);
+		}
+          });
+
+    });
+}
+
+async function triggerBuild(job) {
+    let queueId = await jenkins.job.build(job);
+    let buildId = await waitOnQueue(queueId);
+    return buildId;
+
+}
 
 async function run(file, inventory) {
 
-    // the paths should be from root of cm directory
-    // Transforming path of the files in host to the path in VM's shared folder
-    let filePath = '/bakerx/'+ file;
-    let inventoryPath = '/bakerx/' +inventory;
+    console.log(chalk.blueBright(`Triggering build for ${process.env.JENKINS_JOB_NAME}`));
+    let buildId = await triggerBuild(process.env.JENKINS_JOB_NAME).catch( e => console.log(e));
+    
+    console.log(chalk.blueBright(`Build number :  ${buildId}`));
 
-    let vaultPath = '/tmp/.vault_pass';
-
-    console.log(chalk.blueBright('Running ansible script...'));
-    let result = sshSync(`/bakerx/pipeline/run-ansible.sh ${filePath} ${inventoryPath} ${vaultPath}`, 'vagrant@192.168.33.11');
-    if( result.error ) { process.exit( result.status ); }
-
+    console.log(chalk.green(`Build output`));
+    var log = jenkins.build.logStream(process.env.JENKINS_JOB_NAME, buildId);
+ 
+    log.on('data', function(text) {
+      process.stdout.write(text);
+    });
+ 
+    log.on('error', function(err) {
+      console.log('error', err);
+    });
+ 
+    log.on('end', function() {
+      console.log('end');
+    });
 }
