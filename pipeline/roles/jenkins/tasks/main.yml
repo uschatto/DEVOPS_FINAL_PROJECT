@@ -150,7 +150,7 @@
 
 - name: Copy the jenkins job configuration file to the jenkins-srv
   template:
-     src: /bakerx/pipeline/roles/jenkins/templates/jenkins_jobs.ini
+     src: jenkins_jobs.ini
      dest: ~/jenkins_jobs.ini
   when: not jenkins_jobs.stat.exists
   
