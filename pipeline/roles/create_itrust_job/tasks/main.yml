@@ -1,0 +1,15 @@
+---
+
+
+- name: Copy the build file
+  copy:
+    src: build.yml
+    dest: ~/build.yml
+
+- name: Create a build job
+  become: yes
+  shell: jenkins-jobs --flush-cache --conf jenkins_jobs.ini update build.yml
+
+#Pause for few seconds to wait for the job to get created
+- pause:
+    seconds: 10
