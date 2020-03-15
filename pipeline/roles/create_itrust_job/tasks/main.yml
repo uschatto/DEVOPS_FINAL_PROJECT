@@ -1,5 +1,7 @@
 ---
-
+- name: Install Maven If required
+  apt: name=maven
+  become: yes
 
 - name: Copy the build file
   copy:
