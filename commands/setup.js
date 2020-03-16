@@ -30,14 +30,23 @@ exports.builder = yargs => {
             describe: 'the password to use for ansible vault',
             default: 'DEVOPS16',
             type: 'string'
+        },
+        gh_user: {
+            describe: 'the github user',
+            default: '',
+            type: 'string'
+        },
+        gh_pass: {
+            describe: 'the password to the github user',
+            default: '',
+            type: 'string'
         }
     });
 };
 
 
 exports.handler = async argv => {
-    const { privateKey, file, inventory, vaultpass } = argv;
-
+    const { privateKey, file, inventory, vaultpass, gh_user, gh_pass } = argv;
     (async () => {
 
         if (fs.existsSync(path.resolve(file)) && fs.existsSync(path.resolve(inventory))) 
