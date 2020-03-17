@@ -14,5 +14,6 @@
     - jenkins
     - node
     - mongodb
+    - mysql
     - create_itrust_job
     - create_job
