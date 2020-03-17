@@ -31,12 +31,12 @@ exports.builder = yargs => {
             default: 'DEVOPS16',
             type: 'string'
         },
-        gh_user: {
+        "gh-user": {
             describe: 'the github user',
             default: '',
             type: 'string'
         },
-        gh_pass: {
+        "gh-pass": {
             describe: 'the password to the github user',
             default: '',
             type: 'string'
@@ -46,7 +46,7 @@ exports.builder = yargs => {
 
 
 exports.handler = async argv => {
-    const { privateKey, file, inventory, vaultpass, gh_user, gh_pass } = argv;
+    const { privateKey, file, inventory, vaultpass, ghUser, gh_pass } = argv;
     (async () => {
 
         if (fs.existsSync(path.resolve(file)) && fs.existsSync(path.resolve(inventory))) 
