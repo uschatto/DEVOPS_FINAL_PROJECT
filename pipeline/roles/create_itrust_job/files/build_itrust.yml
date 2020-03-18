@@ -1,0 +1,32 @@
+---
+- job:
+    name: M2
+    project-type: pipeline
+    dsl: |
+      node {
+          stage('Source') {
+            sh 'git clone https://\${GH_USER}:\${GH_PASS}@github.ncsu.edu/engr-csc326-staff/iTrust2-v6'
+          }
+          stage('Properties') {
+            sh 'sudo service mysql restart'
+            sh 'touch iTrust2-v6/iTrust2/src/main/java/db.properties'
+            sh 'cp iTrust2-v6/iTrust2/src/main/java/db.properties.template iTrust2-v6/iTrust2/src/main/java/db.properties'
+            sh 'sed -i \'3d\' iTrust2-v6/iTrust2/src/main/java/db.properties'
+            sh 'sed -i "/root/a password \${MYSQL_PASS}" "iTrust2-v6/iTrust2/src/main/java/db.properties"'
+            sh 'touch iTrust2-v6/iTrust2/src/main/java/email.properties'
+            sh 'cp iTrust2-v6/iTrust2/src/main/java/email.properties.template iTrust2-v6/iTrust2/src/main/java/email.properties'
+            sh 'sed -i "/from/s/$/\${FROM}/" "iTrust2-v6/iTrust2/src/main/java/email.properties"'
+            sh 'sed -i "/username/s/$/\${ID}/" "iTrust2-v6/iTrust2/src/main/java/email.properties"'
+            sh 'sed -i "/password/s/$/\${GMAIL_PASS}/" "iTrust2-v6/iTrust2/src/main/java/email.properties"'
+          }
+          stage('Build') {
+            sh 'cd iTrust2-v6/iTrust2 && sudo mvn -f pom-data.xml process-test-classes'
+            sh 'cd iTrust2-v6/iTrust2 && sudo mvn clean test verify org.apache.maven.plugins:maven-checkstyle-plugin:3.1.0:checkstyle'
+          }
+          stage('Tear Down Services') {
+               dir ('') {
+                  sh "sudo chmod -R 777 ."    
+                  deleteDir()
+               }
+          }
+      }

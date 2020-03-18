@@ -12,8 +12,9 @@
     - env
     - java
     - jenkins
-    - node
+    - packages
     - mongodb
     - mysql
+    - time_config
     - create_itrust_job
     - create_job
