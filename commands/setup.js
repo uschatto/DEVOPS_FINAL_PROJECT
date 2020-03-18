@@ -46,12 +46,12 @@ exports.builder = yargs => {
 
 
 exports.handler = async argv => {
-    const { privateKey, file, inventory, vaultpass, ghUser, gh_pass } = argv;
+    const { privateKey, file, inventory, vaultpass, ghUser, ghPass } = argv;
     (async () => {
 
         if (fs.existsSync(path.resolve(file)) && fs.existsSync(path.resolve(inventory))) 
         {
-             await run( privateKey, file, inventory, vaultpass );
+             await run( privateKey, file, inventory, vaultpass, ghUser, ghPass );
         }
         else
         {
@@ -62,7 +62,7 @@ exports.handler = async argv => {
 
 };
 
-async function run(privateKey, file, inventory, vaultpass) {
+async function run(privateKey, file, inventory, vaultpass, ghUser, ghPass) {
 
     console.log(chalk.greenBright('Installing configuration server!'));
 
@@ -71,7 +71,7 @@ async function run(privateKey, file, inventory, vaultpass) {
     if( result.error ) { console.log(result.error); process.exit( result.status ); }
 
     console.log(chalk.blueBright('Provisioning jenkins server...'));
-    result = child.spawnSync(`bakerx`, `run jenkins-srv bionic --ip 192.168.33.20`.split(' '), {shell:true, stdio: 'inherit'} );
+    result = child.spawnSync(`bakerx`, `run jenkins-srv bionic --ip 192.168.33.20  --memory 3072`.split(' '), {shell:true, stdio: 'inherit'} );
     if( result.error ) { console.log(result.error); process.exit( result.status ); }
 
     console.log(chalk.blueBright('Installing privateKey on configuration server'));
@@ -105,6 +105,6 @@ async function run(privateKey, file, inventory, vaultpass) {
     let vaultPath = '/tmp/.vault_pass';
 
     console.log(chalk.blueBright('Running ansible script...'));
-    result = sshSync(`/bakerx/pipeline/run-ansible.sh ${filePath} ${inventoryPath} ${vaultPath}`, 'vagrant@192.168.33.11');
+    result = sshSync(`/bakerx/pipeline/run-ansible.sh ${filePath} ${inventoryPath} ${vaultPath} ${ghUser} ${ghPass}`, 'vagrant@192.168.33.11');
     if( result.error ) { process.exit( result.status ); }
 }

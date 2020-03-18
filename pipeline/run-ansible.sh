@@ -18,5 +18,7 @@ function die {
 PLAYBOOK=$1
 INVENTORY=$2
 VAULT=$3
+GH_USER=$4
+GH_PASS=$5
 
-ansible-playbook --vault-password-file=$VAULT $PLAYBOOK -i $INVENTORY 
+ansible-playbook --vault-password-file=$VAULT $PLAYBOOK -i $INVENTORY --extra-vars "gh_user=$GH_USER gh_pass=$GH_PASS"
