@@ -1,0 +1,5 @@
+---
+- name: Set time zone
+  timezone:
+    name: US/Eastern
+  become: yes
