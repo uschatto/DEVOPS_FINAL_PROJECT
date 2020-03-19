@@ -104,6 +104,12 @@ async function run(privateKey, file, inventory, vaultpass, ghUser, ghPass) {
 
     let vaultPath = '/tmp/.vault_pass';
 
+    // This is to encode the password in case there are any special characters
+    if(ghPass)
+    {
+        ghPass = encodeURIComponent(ghPass);
+    }
+
     console.log(chalk.blueBright('Running ansible script...'));
     result = sshSync(`/bakerx/pipeline/run-ansible.sh ${filePath} ${inventoryPath} ${vaultPath} ${ghUser} ${ghPass}`, 'vagrant@192.168.33.11');
     if( result.error ) { process.exit( result.status ); }

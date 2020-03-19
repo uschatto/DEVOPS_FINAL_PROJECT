@@ -4,7 +4,8 @@
 set -e
 
 # Trace commands as we run them:
-set -x
+# Commenting out the below line to not display the git password
+#set -x
 
 # Print error message and exit with error code 1
 function die {
