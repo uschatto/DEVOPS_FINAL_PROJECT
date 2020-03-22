@@ -14,11 +14,6 @@
     - MONGO_PASSWORD={{ mongo_password }}
     - MONGO_IP=localhost
     - MONGO_PORT=27017
-    - GH_USER={{ gh_user }}
-    - GH_PASS={{ gh_pass }}
-    - MYSQL_PASS={{ mysql_pass }}
-    - GMAIL_PASS={{ gmail_pass }}
-    - FROM={{ from }}
     - ID={{ id }}
 
 - name: Restart env
