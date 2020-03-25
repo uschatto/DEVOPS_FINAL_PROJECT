@@ -8,11 +8,15 @@ Ketaki Kothavade (kmkothav)
 
 Udita Chattopadhyay (uschatto)
 
+### Milestone 1
 [Checkpoint 1](https://github.ncsu.edu/cscdevops-spring2020/DEVOPS-16/blob/M1/CHECKPOINT.md#checkpoint-1)
 
 [Checkpoint 2](https://github.ncsu.edu/cscdevops-spring2020/DEVOPS-16/blob/M1/CHECKPOINT.md#checkpoint-2)
 
 [Screencast Milestone1](https://drive.google.com/open?id=1i3DAs5i-KBCxpR2hU6X8smYrQH9itM-Y)
+
+### Milestone 2
+[Checkpoint 1](https://github.ncsu.edu/cscdevops-spring2020/DEVOPS-16/blob/M2/M2-CHECKPOINT.md#checkpoint-1)
 
 ## The following tasks have been successfully achieved:
 
