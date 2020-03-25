@@ -1,0 +1,12 @@
+---
+- name: Copy the build file
+  become: yes
+  copy:
+     src: fuzzer.js  
+     dest: "{{ jenkins_path }}/workspace/{{ jenkins_job }}/iTrust2"
+
+- name: Run the fuzzer
+  become: yes
+  shell:
+     chdir: "{{ jenkins_path }}/workspace/{{ jenkins_job }}/iTrust2" 
+     cmd: node fuzzer.js
