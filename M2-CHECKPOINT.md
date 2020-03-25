@@ -12,3 +12,12 @@
 | Story   | Item/Status   |  Issues/Tasks
 | ------------- | ------------  |  ------------
 | Create a job for iTrust | Completed | https://github.ncsu.edu/cscdevops-spring2020/DEVOPS-16/issues/7
+| Install Maven dependency for iTrust | Completed | https://github.ncsu.edu/cscdevops-spring2020/DEVOPS-16/issues/6
+| Trigger build job iTrust | Completed | https://github.ncsu.edu/cscdevops-spring2020/DEVOPS-16/issues/5
+| MVN manual checks | Completed | https://github.ncsu.edu/cscdevops-spring2020/DEVOPS-16/issues/4
+| Install mysql | Completed | https://github.ncsu.edu/cscdevops-spring2020/DEVOPS-16/issues/9
+| Install chrome and change the timezone | Completed | https://github.ncsu.edu/cscdevops-spring2020/DEVOPS-16/issues/10
+| Cloning iTrust private repo via Ansible | Completed | https://github.ncsu.edu/cscdevops-spring2020/DEVOPS-16/issues/8
+| Create itrust build job | Completed | https://github.ncsu.edu/cscdevops-spring2020/DEVOPS-16/issues/11
+| Pipeline setup command to accept the github user and password | Completed | https://github.ncsu.edu/cscdevops-spring2020/DEVOPS-16/issues/12
+| Error handling if the password or the user has special characters | Completed | https://github.ncsu.edu/cscdevops-spring2020/DEVOPS-16/issues/13
