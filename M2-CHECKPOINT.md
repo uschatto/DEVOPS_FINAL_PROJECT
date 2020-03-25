@@ -18,6 +18,6 @@
 | Install mysql | Completed | https://github.ncsu.edu/cscdevops-spring2020/DEVOPS-16/issues/9
 | Install chrome and change the timezone | Completed | https://github.ncsu.edu/cscdevops-spring2020/DEVOPS-16/issues/10
 | Cloning iTrust private repo via Ansible | Completed | https://github.ncsu.edu/cscdevops-spring2020/DEVOPS-16/issues/8
-| Create itrust build job | Completed | https://github.ncsu.edu/cscdevops-spring2020/DEVOPS-16/issues/11
+| Enhance itrust build job | Completed | https://github.ncsu.edu/cscdevops-spring2020/DEVOPS-16/issues/11
 | Pipeline setup command to accept the github user and password | Completed | https://github.ncsu.edu/cscdevops-spring2020/DEVOPS-16/issues/12
 | Error handling if the password or the user has special characters | Completed | https://github.ncsu.edu/cscdevops-spring2020/DEVOPS-16/issues/13
