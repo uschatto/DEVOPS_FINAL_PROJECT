@@ -11,7 +11,22 @@ const getFilesRecursively = (dir, filelist = [])=> {
 
 const fuzzer = (filepath)=> {
         //Implement fuzzing logic on the filepath
-        console.log(filepath)
+        console.log(filepath);
+        var data = fs.readFileSync(filepath, 'utf-8').split(' ');
+
+        data.forEach(function(element, index){
+           data[index] = element.replace(/!=/g, "==");
+           data[index] = element.replace(/==/g, "!=");
+           data[index] = element.replace(/</g, ">");
+           data[index] = element.replace(/>/g, "<");
+           
+           data[index] = element.replace(/||/g, "&&");
+           data[index] = element.replace(/&&/g, "||");
+        });
+
+        data = data.join(" ");
+        fs.writeFileSync(filepath, data);
+
 }
 
 const runFuzzer= (n) =>
