@@ -28,10 +28,11 @@ exports.builder = yargs => {
             default: 'DEVOPS16',
             type: 'string'
         },
-	count: {
+	    count: {
             alias: 'c',
-	    describe: 'test suite for iTrust to run `-c` numbers of times.',
-            type: 'int'
+	        describe: 'test suite for iTrust to run `-c` numbers of times.',
+            type: 'int',
+            default: 5
         }
     });
 };
@@ -63,7 +64,7 @@ async function run(file, inventory, vaultpass, count) {
 
     let vaultPath = '/tmp/.vault_pass';
 
-    console.log(chalk.blueBright('Running ansible script...'));
+    console.log(chalk.blueBright('Running ansible script for useful-tests...'));
     result = sshSync(`/bakerx/pipeline/run-ansible.sh ${filePath} ${inventoryPath} ${vaultPath} ${count}`, 'vagrant@192.168.33.11');
     if( result.error ) { process.exit( result.status ); }
 }
