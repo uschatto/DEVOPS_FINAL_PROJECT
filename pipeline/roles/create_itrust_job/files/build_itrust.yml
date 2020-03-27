@@ -29,4 +29,10 @@
             sh 'cd iTrust2 && sudo mvn -f pom-data.xml process-test-classes'
             sh 'cd iTrust2 && sudo mvn clean test verify org.apache.maven.plugins:maven-checkstyle-plugin:3.1.0:checkstyle'
           }
+          stage('Tear Down Services') {
+            dir ('') {
+              sh "sudo chmod -R 777 ."    
+              deleteDir()
+            }
+          }
           }

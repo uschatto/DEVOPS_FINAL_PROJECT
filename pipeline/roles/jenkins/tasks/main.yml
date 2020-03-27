@@ -254,3 +254,4 @@
     - { credId: 'gmail', username: "{{ from }}", password: "{{ gmail_pass }}"}
     - { credId: 'mysql', username: "root", password: "{{ mysql_pass }}"}
   no_log: true
+  status_code: 302
