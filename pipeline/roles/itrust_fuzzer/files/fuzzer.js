@@ -15,13 +15,41 @@ const fuzzer = (filepath)=> {
         var data = fs.readFileSync(filepath, 'utf-8').split(' ');
 
         data.forEach(function(element, index){
-           data[index] = element.replace(/!=/g, "==");
-           data[index] = element.replace(/==/g, "!=");
-           data[index] = element.replace(/</g, ">");
-           data[index] = element.replace(/>/g, "<");
-           
-           data[index] = element.replace(/||/g, "&&");
-           data[index] = element.replace(/&&/g, "||");
+        switch(element.trim()){
+                case "!=":
+                        data[index] = element.replace(/!=/g, "==");
+                        break;
+                case "==":
+                        data[index] = element.replace(/==/g, "!=");
+                        break;
+                case ">":
+                        data[index] = element.replace(/>/g, "<");
+                        break;
+                case "<":
+                        data[index] = element.replace(/</g, ">");
+                        break;
+                case "1":
+                        data[index] = element.replace(/1/g,"0");
+                        break;
+                case "0":
+                        data[index] = element.replace(/0/g,"1");
+                        break;
+                case "||":
+                        data[index] = element.replace(/\|\|/g,"&&");
+                        break;
+                case "&&":
+                        data[index] = element.replace(/&&/g,"||");
+                        break;
+                default:
+                        break;
+        }
+        if(element.includes("++")){
+                data[index] = element.replace("++", "--");
+        }
+        if(element.includes("--")){
+                data[index] = element.replace("--", "++");
+        }
+  
         });
 
         data = data.join(" ");
@@ -32,7 +60,7 @@ const fuzzer = (filepath)=> {
 const runFuzzer= (n) =>
 {
         //Get the list of filenames in an array
-        let javaPaths = getFilesRecursively('src/main/java/edu/ncsu/csc/itrust2')
+        let javaPaths = getFilesRecursively('src/main/java/edu/ncsu/csc/itrust2_test')
         let arrayLength = javaPaths.length
         let indexAlreadyFuzzed = []
 
