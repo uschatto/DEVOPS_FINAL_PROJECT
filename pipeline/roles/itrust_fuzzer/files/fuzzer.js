@@ -60,7 +60,7 @@ const fuzzer = (filepath)=> {
 const runFuzzer= (n) =>
 {
         //Get the list of filenames in an array
-        let javaPaths = getFilesRecursively('src/main/java/edu/ncsu/csc/itrust2_test')
+        let javaPaths = getFilesRecursively('src/main/java/edu/ncsu/csc/itrust2')
         let arrayLength = javaPaths.length
         let indexAlreadyFuzzed = []
 
