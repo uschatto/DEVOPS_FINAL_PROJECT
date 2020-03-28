@@ -58,34 +58,29 @@ const mutation= (data)=>{
 
 const fuzzer = (filepath)=> {
         //Implement fuzzing logic on the filepath
-        console.log("File: " + filepath);
-        var lines = fs.readFileSync(filepath, 'utf-8').split('\n');
+        let lines = fs.readFileSync(filepath, 'utf-8').split('\n');
 
         let indexAlreadyMutated = []
         //Store the 10% of the total lines in a variable
         let linesToMutateCount = Math.floor(0.1 * lines.length)
-        console.log("linesToMutateCount: " + linesToMutateCount)
+        let count = linesToMutateCount
 
-        //Randomly select files to be acted upon and check if reached the linesToMutateCount
-        while (linesToMutateCount != 0){
+        //Randomly select lines to be acted upon and check if reached the linesToMutateCount
+        while (count != 0){
                 let rand = Math.floor(Math.random() * lines.length)
-                //console.log("Random number: " + rand)
 
                 if (!indexAlreadyMutated.includes(rand))
                 {
                         indexAlreadyMutated.push(rand)
-                        linesToMutateCount = linesToMutateCount - 1
-                        var data = lines[rand].split(' ');
-                        //console.log("Randomly selected file: " + lines[rand])
-                                                
+                        count = count - 1
+                        var data = lines[rand].split(' ');                                                
                         lines[rand] = mutation(data);
                 }
         }
+        console.log(linesToMutateCount + ' lines mutated of ' + JSON.stringify(filepath) + ' file.')
 
         lines = lines.join("\n")
         fs.writeFileSync(filepath, lines);
-        //console.log("------COMPLETED------")
-        //console.log(lines)
 }
 
 const runFuzzer= (n) =>
