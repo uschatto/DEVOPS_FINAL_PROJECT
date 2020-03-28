@@ -1,6 +1,6 @@
 ---
 - job:
-    name: M2
+    name: iTrust
     project-type: pipeline
     dsl: |
       node {

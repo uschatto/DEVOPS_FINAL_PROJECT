@@ -1,6 +1,6 @@
 ---
 - job:
-    name: Milestone1
+    name: checkbox.io
     project-type: pipeline
     dsl: |
       node {
