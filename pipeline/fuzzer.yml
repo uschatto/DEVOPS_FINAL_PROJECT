@@ -7,4 +7,4 @@
     vars.yaml
 
   roles:
-    - iTrust_fuzzer
+    - itrust_fuzzer
