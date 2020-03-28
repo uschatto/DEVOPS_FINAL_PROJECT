@@ -11,50 +11,78 @@ const getFilesRecursively = (dir, filelist = [])=> {
 
 const fuzzer = (filepath)=> {
         //Implement fuzzing logic on the filepath
-        console.log(filepath);
-        var data = fs.readFileSync(filepath, 'utf-8').split(' ');
+        console.log("File: " + filepath);
+        var lines = fs.readFileSync(filepath, 'utf-8').split('\n');
 
-        data.forEach(function(element, index){
-        switch(element.trim()){
-                case "!=":
-                        data[index] = element.replace(/!=/g, "==");
-                        break;
-                case "==":
-                        data[index] = element.replace(/==/g, "!=");
-                        break;
-                case ">":
-                        data[index] = element.replace(/>/g, "<");
-                        break;
-                case "<":
-                        data[index] = element.replace(/</g, ">");
-                        break;
-                case "1":
-                        data[index] = element.replace(/1/g,"0");
-                        break;
-                case "0":
-                        data[index] = element.replace(/0/g,"1");
-                        break;
-                case "||":
-                        data[index] = element.replace(/\|\|/g,"&&");
-                        break;
-                case "&&":
-                        data[index] = element.replace(/&&/g,"||");
-                        break;
-                default:
-                        break;
-        }
-        if(element.includes("++")){
-                data[index] = element.replace("++", "--");
-        }
-        if(element.includes("--")){
-                data[index] = element.replace("--", "++");
-        }
-  
-        });
+        let indexAlreadyMutated = []
+        //Store the 10% of the total lines in a variable
+        let linesToMutateCount = Math.floor(0.1 * lines.length)
+        console.log("linesToMutateCount: " + linesToMutateCount)
 
-        data = data.join(" ");
-        fs.writeFileSync(filepath, data);
+        //Randomly select files to be acted upon and check if reached the linesToMutateCount
+        while (linesToMutateCount != 0){
+                let rand = Math.floor(Math.random() * lines.length)
+                //console.log("Random number: " + rand)
 
+                if (!indexAlreadyMutated.includes(rand))
+                {
+                        indexAlreadyMutated.push(rand)
+                        linesToMutateCount = linesToMutateCount - 1
+                        var data = lines[rand].split(' ');
+                        //console.log("Randomly selected file: " + lines[rand])
+
+                        data.forEach(function(element, index){
+                        switch(element.trim()){
+                                case "!=":
+                                        data[index] = element.replace(/!=/g, "==");
+                                        break;
+                                case "==":
+                                        data[index] = element.replace(/==/g, "!=");
+                                        break;
+                                case ">":
+                                        data[index] = element.replace(/>/g, "<");
+                                        break;
+                                case "<":
+                                        data[index] = element.replace(/</g, ">");
+                                        break;
+                                case ">=":
+                                        data[index] = element.replace(/>=/g, "<=");
+                                        break;
+                                case "<=":
+                                        data[index] = element.replace(/<=/g, ">=");
+                                        break;
+                                case "1":
+                                        data[index] = element.replace(/1/g,"0");
+                                        break;
+                                case "0":
+                                        data[index] = element.replace(/0/g,"1");
+                                        break;
+                                case "||":
+                                        data[index] = element.replace(/\|\|/g,"&&");
+                                        break;
+                                case "&&":
+                                        data[index] = element.replace(/&&/g,"||");
+                                        break;
+                                default:
+                                        break;
+                        }
+                        if(element.includes("++")){
+                                data[index] = element.replace("++", "--");
+                        }
+                        if(element.includes("--")){
+                                data[index] = element.replace("--", "++");
+                        }
+
+                        });
+
+                        lines[rand] = data.join(" ");
+                }
+        }
+
+        lines = lines.join("\n")
+        fs.writeFileSync(filepath, lines);
+        //console.log("------COMPLETED------")
+        //console.log(lines)
 }
 
 const runFuzzer= (n) =>
