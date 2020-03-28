@@ -9,6 +9,53 @@ const getFilesRecursively = (dir, filelist = [])=> {
         return filelist
 }
 
+const mutation= (data)=>{
+        data.forEach(function(element, index){
+                switch(element.trim()){
+                        case "!=":
+                                data[index] = element.replace(/!=/g, "==");
+                                break;
+                        case "==":
+                                data[index] = element.replace(/==/g, "!=");
+                                break;
+                        case ">":
+                                data[index] = element.replace(/>/g, "<");
+                                break;
+                        case "<":
+                                data[index] = element.replace(/</g, ">");
+                                break;
+                        case ">=":
+                                data[index] = element.replace(/>=/g, "<=");
+                                break;
+                        case "<=":
+                                data[index] = element.replace(/<=/g, ">=");
+                                break;
+                        case "1":
+                                data[index] = element.replace(/1/g,"0");
+                                break;
+                        case "0":
+                                data[index] = element.replace(/0/g,"1");
+                                break;
+                        case "||":
+                                data[index] = element.replace(/\|\|/g,"&&");
+                                break;
+                        case "&&":
+                                data[index] = element.replace(/&&/g,"||");
+                                break;
+                        default:
+                                break;
+                }
+                if(element.includes("++")){
+                        data[index] = element.replace("++", "--");
+                }
+                if(element.includes("--")){
+                        data[index] = element.replace("--", "++");
+                }
+
+                });
+        return data.join(" ")
+}
+
 const fuzzer = (filepath)=> {
         //Implement fuzzing logic on the filepath
         console.log("File: " + filepath);
@@ -30,52 +77,8 @@ const fuzzer = (filepath)=> {
                         linesToMutateCount = linesToMutateCount - 1
                         var data = lines[rand].split(' ');
                         //console.log("Randomly selected file: " + lines[rand])
-
-                        data.forEach(function(element, index){
-                        switch(element.trim()){
-                                case "!=":
-                                        data[index] = element.replace(/!=/g, "==");
-                                        break;
-                                case "==":
-                                        data[index] = element.replace(/==/g, "!=");
-                                        break;
-                                case ">":
-                                        data[index] = element.replace(/>/g, "<");
-                                        break;
-                                case "<":
-                                        data[index] = element.replace(/</g, ">");
-                                        break;
-                                case ">=":
-                                        data[index] = element.replace(/>=/g, "<=");
-                                        break;
-                                case "<=":
-                                        data[index] = element.replace(/<=/g, ">=");
-                                        break;
-                                case "1":
-                                        data[index] = element.replace(/1/g,"0");
-                                        break;
-                                case "0":
-                                        data[index] = element.replace(/0/g,"1");
-                                        break;
-                                case "||":
-                                        data[index] = element.replace(/\|\|/g,"&&");
-                                        break;
-                                case "&&":
-                                        data[index] = element.replace(/&&/g,"||");
-                                        break;
-                                default:
-                                        break;
-                        }
-                        if(element.includes("++")){
-                                data[index] = element.replace("++", "--");
-                        }
-                        if(element.includes("--")){
-                                data[index] = element.replace("--", "++");
-                        }
-
-                        });
-
-                        lines[rand] = data.join(" ");
+                                                
+                        lines[rand] = mutation(data);
                 }
         }
 
