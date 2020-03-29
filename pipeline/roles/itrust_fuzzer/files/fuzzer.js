@@ -61,8 +61,9 @@ const fuzzer = (filepath)=> {
         let lines = fs.readFileSync(filepath, 'utf-8').split('\n');
 
         let indexAlreadyMutated = []
-        //Store the 10% of the total lines in a variable
-        let linesToMutateCount = Math.floor(0.1 * lines.length)
+        //Store up to 10% of the total lines in a variable
+        let randPer = Math.random() * (0.1-0.01) + 0.01
+        let linesToMutateCount = Math.floor(randPer * lines.length)
         let count = linesToMutateCount
 
         //Randomly select lines to be acted upon and check if reached the linesToMutateCount
@@ -90,9 +91,10 @@ const runFuzzer= (n) =>
         let arrayLength = javaPaths.length
         let indexAlreadyFuzzed = []
 
-        //Store the 10% of the total array length in a variable
-        let count = Math.floor(0.1 * arrayLength)
-
+        //Store up to 10% of the total array length in a variable
+        let randPer = Math.random() * (0.1-0.01) + 0.01
+        let count = Math.floor(randPer * arrayLength)
+        
         //Randomly select files to be acted upon and check if reached the count
         while (count != 0){
                 let rand = Math.floor(Math.random() * arrayLength)
