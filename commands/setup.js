@@ -46,7 +46,9 @@ exports.builder = yargs => {
 
 
 exports.handler = async argv => {
-    const { privateKey, file, inventory, vaultpass, ghUser, ghPass } = argv;
+    const { privateKey, file, inventory, vaultpass } = argv;
+    let ghUser = argv['gh-user'];
+    let ghPass = argv['gh-pass'];
     (async () => {
 
         if (fs.existsSync(path.resolve(file)) && fs.existsSync(path.resolve(inventory))) 
