@@ -3,6 +3,7 @@ var options = {tokens:true, tolerant: true, loc: true, range: true };
 var fs = require("fs");
 var path = require("path");
 const threshold_message_chains = 10;
+const threshold_long_method = 100;
 
 function getFilesRecursively(dir, filelist = []){
          fs.readdirSync(dir).forEach(file => {
@@ -46,6 +47,8 @@ function FunctionBuilder()
         {
 		console.log("\tFunctionName : " + this.FunctionName + " MaxNestingDepth : " + this.MaxNestingDepth + " MaxMessageChain : " + this.MaxMessageChain);
         }
+        // Number of lines in function
+        this.NumberOfLines = 0;
 
 }
 
@@ -95,7 +98,8 @@ function complexity(filePath)
                         var builder = new FunctionBuilder();
 
                         builder.FunctionName = functionName(node);
-			
+			builder.NumberOfLines = node.loc.end.line - node.loc.start.line + 1;
+
                         traverseWithParents(node, function(child_)
                         {
                                 //The max length of a message chain in a function
@@ -107,7 +111,8 @@ function complexity(filePath)
                                         {
                                                 if(_child_.type === 'MemberExpression')
                                                 {
-                                                        length++;                                                                                                                                                   }
+                                                        length++;                                                                                                                                                   
+                                                }
                                                 //Function to check and put the max of the length and MaxMessageChain as the final max value
                                                 builder.MaxMessageChain = Math.max(builder.MaxMessageChain,length);
                                         });
@@ -116,6 +121,10 @@ function complexity(filePath)
                         if(builder.MaxMessageChain > threshold_message_chains)
                         {
                                 throw new Error("FileName : [" + filePath + "] FunctionName : [" + builder.FunctionName + "] exceeded the threshold value for maximum message chains having " + builder.MaxMessageChain + " message chains");
+                        }
+                        if(builder.NumberOfLines > threshold_long_method)
+                        {
+                                throw new Error("FileName : [" + filePath + "] FunctionName : [" + builder.FunctionName + "] exceeded the threshold value for longer method having " + builder.NumberOfLines + " lines");
                         }
                         builders[filePath] = fileBuilder;
                         builders[builder.FunctionName] = builder;
