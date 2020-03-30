@@ -22,7 +22,7 @@ class fuzzer {
 
     static seed (kernel) {
 	fuzzer._random = new Random.Random(Random.MersenneTwister19937.seed(kernel));
-        fuzzer._random;
+        return fuzzer._random;
     }
 	
     static mutation(filepath) { //Implement fuzzing logic on the filepath

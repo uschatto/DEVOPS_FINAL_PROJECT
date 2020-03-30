@@ -4,6 +4,11 @@
     src: build.yml
     dest: ~/build.yml
 
+- name: Copy the static analysis tester
+  copy:
+    src: analysis.js
+    dest: ~/analysis.js 
+
 - name: Create a build job
   become: yes
   shell: jenkins-jobs --flush-cache --conf jenkins_jobs.ini update build.yml
