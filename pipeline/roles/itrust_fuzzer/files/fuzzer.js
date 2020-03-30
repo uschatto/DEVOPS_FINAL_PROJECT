@@ -92,7 +92,10 @@ async function runFuzzer(n)
         //Get the list of filenames in an array
     let javaPaths = getFilesRecursively('iTrust2-v6/iTrust2/src/main/java/edu/ncsu/csc/itrust2')
     let arrayLength = javaPaths.length
-    child.execSync('cd iTrust2-v6/iTrust2 && sudo mvn -f pom-data.xml process-test-classes', {encoding: 'utf-8'});
+    try{
+        child.execSync('cd iTrust2-v6/iTrust2 && sudo mvn -f pom-data.xml process-test-classes', {encoding: 'utf-8'});
+        }
+    catch(e){}
     while (n != 0) {
         let indexAlreadyFuzzed = []
         //Store the 10% of the total array length in a variable

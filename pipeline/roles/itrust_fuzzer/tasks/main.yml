@@ -3,10 +3,15 @@
   become: yes
   copy:
      src: fuzzer.js  
-     dest: "{{ jenkins_path }}/workspace/{{ jenkins_job }}/iTrust2"
+     dest: "{{ home_dir }}"
 
-- name: Run the fuzzer
-  become: yes
-  shell:
-     chdir: "{{ jenkins_path }}/workspace/{{ jenkins_job }}/iTrust2" 
-     cmd: node fuzzer.js
+- name: Clone iTrust repo
+  git:
+     repo: 'https://{{gh_user}}:{{gh_pass}}@github.ncsu.edu/engr-csc326-staff/iTrust2-v6.git'
+     dest: ~/iTrust2-v6
+
+# - name: Run the fuzzer
+#   become: yes
+#   shell:
+#      chdir: "{{ jenkins_path }}/workspace/{{ jenkins_job }}/iTrust2" 
+#      cmd: node fuzzer.js
