@@ -15,7 +15,7 @@
           }
           stage('Static Analysis') {
               sh 'sudo cp /home/vagrant/analysis.js .'
-              sh 'sudo npm install esprima'
+              sh 'sudo npm install -save esprima chalk'
               try {
                    sh 'node analysis.js'
               }
