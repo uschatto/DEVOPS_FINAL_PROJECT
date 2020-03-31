@@ -30,7 +30,7 @@
      - random-js
      - stacktrace-parser
      - xml2js
-     - mysql
+     - mysql2
 
 # - name: Run the fuzzer
 #   become: yes

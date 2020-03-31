@@ -135,6 +135,7 @@
     - ws-cleanup
     - build-publisher
     - credentials
+    
   register: jenkins_plugin
   ignore_errors: true
 

@@ -4,7 +4,7 @@ var fs = require('fs'),
 const path = require('path')
 const Random = require('random-js');
 const stackTrace = require('stacktrace-parser');
-const mysql = require('mysql')
+const mysql = require('mysql2/promise');
 var parser = new xml2js.Parser();
 var Bluebird = require('bluebird')
 var test_dic = {};
@@ -213,7 +213,7 @@ async function deletedb()
         password: '{{ mysql_pass }}',
     };
 
-    let connection = mysql.createConnection(mysql_config);
+    let connection = await mysql.createConnection(mysql_config);
     let sql = `DROP DATABASE IF EXISTS iTrust2;`;
 
     connection.query(sql, (error, results, fields) => {
@@ -222,16 +222,17 @@ async function deletedb()
 
         console.log('Deleted Row(s):', results.affectedRows);
       });
-    connection.end()
+    await connection.end()
 
 }
 
 (async () => {
+    await deletedb();
+    console.log('DB deleted');
     if(process.argv.length > 2){
+    console.log('DB deleted');
         await runFuzzer(process.argv[2]);
     }
     //console.log('Final: ', test_dic);
     await displaySorted();
-    console.log('Deleting database');
-    await deletedb();
 })();
