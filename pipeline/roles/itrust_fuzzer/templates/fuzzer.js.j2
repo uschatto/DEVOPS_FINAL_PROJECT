@@ -4,6 +4,7 @@ var fs = require('fs'),
 const path = require('path')
 const Random = require('random-js');
 const stackTrace = require('stacktrace-parser');
+const mysql = require('mysql')
 var parser = new xml2js.Parser();
 var Bluebird = require('bluebird')
 var test_dic = {};
@@ -203,10 +204,34 @@ async function displaySorted()
     }
 }
 
+async function deletedb()
+{
+
+    let mysql_config = {
+        host: 'localhost',
+        user: 'root',
+        password: '{{ mysql_pass }}',
+    };
+
+    let connection = mysql.createConnection(mysql_config);
+    let sql = `DROP DATABASE IF EXISTS iTrust2;`;
+
+    connection.query(sql, (error, results, fields) => {
+        if (error)
+          return console.error(error.message);
+
+        console.log('Deleted Row(s):', results.affectedRows);
+      });
+    connection.end()
+
+}
+
 (async () => {
     if(process.argv.length > 2){
         await runFuzzer(process.argv[2]);
     }
     //console.log('Final: ', test_dic);
     await displaySorted();
+    console.log('Deleting database');
+    await deletedb();
 })();

@@ -1,14 +1,36 @@
 ---
-- name: Copy the build file
+- name: Copy the fuzzer.js
   become: yes
-  copy:
-     src: fuzzer.js  
-     dest: "{{ home_dir }}"
+  template:
+     src: fuzzer.js.j2  
+     dest: "{{ansible_env.HOME}}/fuzzer.js"
 
 - name: Clone iTrust repo
   git:
      repo: 'https://{{gh_user}}:{{gh_pass}}@github.ncsu.edu/engr-csc326-staff/iTrust2-v6.git'
-     dest: ~/iTrust2-v6
+     dest: "{{ ansible_env.HOME }}/iTrust2-v6"
+
+- name: Copy db.properties file
+  template:
+     src: db.properties.j2
+     dest: "{{ ansible_env.HOME }}/iTrust2-v6/iTrust2/src/main/java/db.properties"
+
+- name: Copy email.properties
+  template:
+     src: email.properties.j2
+     dest: "{{ ansible_env.HOME }}/iTrust2-v6/iTrust2/src/main/java/email.properties"
+
+- name: Install nodejs modules
+  npm:
+     name: "{{ item }}"
+     path: '{{ ansible_env.HOME }}'
+  become: yes
+  with_items:
+     - bluebird
+     - random-js
+     - stacktrace-parser
+     - xml2js
+     - mysql
 
 # - name: Run the fuzzer
 #   become: yes

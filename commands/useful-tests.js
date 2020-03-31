@@ -4,7 +4,6 @@ const path = require('path');
 const os = require('os');
 const fs = require('fs');
 require('dotenv').config();
-
 const scpSync = require('../lib/scp');
 const sshSync = require('../lib/ssh');
 
@@ -64,7 +63,8 @@ async function run(file, inventory, vaultpass, count) {
 
     let vaultPath = '/tmp/.vault_pass';
 
-    console.log(chalk.blueBright('Running ansible script for useful-tests...'));
-    result = sshSync(`/bakerx/pipeline/run-ansible.sh ${filePath} ${inventoryPath} ${vaultPath} ${count}`, 'vagrant@192.168.33.11');
+    console.log(chalk.blueBright('Running fuzzer.js for useful-tests...'));
+    //result = sshSync(`/bakerx/pipeline/run-ansible.sh ${filePath} ${inventoryPath} ${vaultPath} ${count}`, 'vagrant@192.168.33.11');
+    result = sshSync(`node fuzzer.js ${count}`, 'vagrant@192.168.33.20');
     if( result.error ) { process.exit( result.status ); }
 }

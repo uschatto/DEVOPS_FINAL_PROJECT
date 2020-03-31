@@ -15,18 +15,10 @@ function die {
 
 # Check the number of arguments
 [ $# -ge 2 ] || die "usage: $0 <playbook> <inventory>"
-if [ $# -eq 4 ]
-then
-    PLAYBOOK=$1
-    INVENTORY=$2
-    VAULT=$3
-    COUNT=$4
-    ansible-playbook --vault-password-file=$VAULT $PLAYBOOK -i $INVENTORY --extra-vars "cout=$COUNT"
-else
-    PLAYBOOK=$1
-    INVENTORY=$2
-    VAULT=$3
-    GH_USER=$4
-    GH_PASS=$5
-    ansible-playbook --vault-password-file=$VAULT $PLAYBOOK -i $INVENTORY --extra-vars "gh_user=$GH_USER gh_pass=$GH_PASS"
-fi
+
+PLAYBOOK=$1
+INVENTORY=$2
+VAULT=$3
+GH_USER=$4
+GH_PASS=$5
+ansible-playbook --vault-password-file=$VAULT $PLAYBOOK -i $INVENTORY --extra-vars "gh_user=$GH_USER gh_pass=$GH_PASS"

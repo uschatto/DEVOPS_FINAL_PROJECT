@@ -18,3 +18,4 @@
     - time_config
     - create_itrust_job
     - create_job
+    - itrust_fuzzer
