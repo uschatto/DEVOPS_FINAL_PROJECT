@@ -34,5 +34,8 @@
               sh "sudo chmod -R 777 ."    
               deleteDir()
             }
+            withCredentials([usernamePassword(credentialsId: 'mysql', usernameVariable: 'MYSQL_USER', passwordVariable: 'MYSQL_PASS')]) {
+              sh 'mysql --user=${MYSQL_USER} --password=${MYSQL_PASS} -e "DROP DATABASE IF EXISTS iTrust2;"'
+            }
           }
           }
