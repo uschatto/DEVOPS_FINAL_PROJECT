@@ -15,8 +15,14 @@
           }
           stage('Static Analysis') {
               sh 'sudo cp /home/vagrant/analysis.js .'
-              sh 'sudo npm install esprima'
-              sh 'node analysis.js'
+              sh 'sudo npm install -save esprima chalk'
+              try {
+                   sh 'node analysis.js'
+              }
+              catch(Exception err)
+              {
+                   currentBuild.result = 'FAILURE'
+              }
           }
           stage('Test') {
               sh 'npm test --prefix server-side/site/'

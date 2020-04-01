@@ -2,8 +2,10 @@ var esprima = require("esprima");
 var options = {tokens:true, tolerant: true, loc: true, range: true };
 var fs = require("fs");
 var path = require("path");
+var chalk = require("chalk");
 const threshold_message_chains = 10;
 const threshold_long_method = 100;
+const threshold_nesting_depth = 5; 
 
 function getFilesRecursively(dir, filelist = []){
          fs.readdirSync(dir).forEach(file => {
@@ -15,6 +17,7 @@ function getFilesRecursively(dir, filelist = []){
 
 function main()
 {
+        var error = false;
 	//Get the list of filenames from server-side/site
         let filePaths = getFilesRecursively('server-side/site');
 
@@ -31,9 +34,44 @@ function main()
                 var builder = builders[node];
                 builder.report();
         }	
+
+        // Report functions/file exceeding threshold values
+        console.log(chalk.red(`The following exceeded the max message chains threshold value of ${threshold_message_chains} : `));
+        for( var node in messageChains )
+        {
+                var messageChain = builders[node];
+                messageChain.report();  
+                error = true;
+        }
+
+        console.log(chalk.red(`The following exceeded the long method threshold value of ${threshold_long_method} : `));
+        for( var node in longMethods ) 
+        {
+                var longMethod = builders[node];
+                longMethod.report();
+                error = true;
+        }
+
+        console.log(chalk.red(`The following exceeded the max nesting depth threshold value of ${threshold_nesting_depth} : `));
+        for( var node in nestingDepths )
+        {
+                var nestingDepth = builders[node]; 
+                nestingDepth.report();
+                error = true;
+        }
+
+
+        if(error == true)
+        {
+                throw new Error("Code smells were found..Fail the jenkins build");
+        }
+
 }
 
 var builders = {};
+var messageChains = {};
+var longMethods = {};
+var nestingDepths = {};
 
 function FunctionBuilder()
 {
@@ -43,13 +81,13 @@ function FunctionBuilder()
         this.MaxMessageChain = 0; 
         // The function name will be reported here.
         this.FunctionName = "";
-        this.report = function()
-        {
-		console.log("\tFunctionName : " + this.FunctionName + " MaxNestingDepth : " + this.MaxNestingDepth + " MaxMessageChain : " + this.MaxMessageChain);
-        }
         // Number of lines in function
         this.NumberOfLines = 0;
 
+        this.report = function()
+        {
+		console.log("\tFunctionName : " + this.FunctionName + " MaxNestingDepth : " + this.MaxNestingDepth + " MaxMessageChain : " + this.MaxMessageChain + " LongMethod : " + this.NumberOfLines);
+        }
 }
 
 function FileBuilder()
@@ -98,7 +136,7 @@ function complexity(filePath)
                         var builder = new FunctionBuilder();
 
                         builder.FunctionName = functionName(node);
-			builder.NumberOfLines = node.loc.end.line - node.loc.start.line + 1;
+                        builder.NumberOfLines = node.loc.end.line - node.loc.start.line + 1;
 
                         traverseWithParents(node, function(child_)
                         {
@@ -117,38 +155,49 @@ function complexity(filePath)
                                                 builder.MaxMessageChain = Math.max(builder.MaxMessageChain,length);
                                         });
                                 }
+
+                                var maxdepth = 0;
+                                //The max nesting depth of If in a function
+                                if(child_.type == 'IfStatement')
+                                {
+                                         var s = 0;
+                                         traverseWithParents(child_, function(_child_)
+                                         {
+                                                 if(_child_.type == 'IfStatement')
+                                                 {
+                                                        if(_child_.nextSibling){
+                                                                s = s + 1;
+                                                         }
+                                                         maxdepth = maxdepth + 1;       
+                                                 }
+                                         });
+                                         maxdepth = maxdepth - s;
+                                         //Function to check and put the max of the maxdepth and MaxNestingDepth as the final max value
+                                         builder.MaxNestingDepth= Math.max(builder.MaxNestingDepth,maxdepth);
+                                }
                         });
+
+                        
+                        
                         if(builder.MaxMessageChain > threshold_message_chains)
                         {
-                                throw new Error("FileName : [" + filePath + "] FunctionName : [" + builder.FunctionName + "] exceeded the threshold value for maximum message chains having " + builder.MaxMessageChain + " message chains");
+                                messageChains[filePath] = fileBuilder;
+                                messageChains[builder.FunctionName] = builder;
                         }
                         if(builder.NumberOfLines > threshold_long_method)
                         {
-                                throw new Error("FileName : [" + filePath + "] FunctionName : [" + builder.FunctionName + "] exceeded the threshold value for longer method having " + builder.NumberOfLines + " lines");
+                                longMethods[filePath] = fileBuilder;
+                                longMethods[builder.FunctionName] = builder;
+                        }
+                        if(builder.MaxNestingDepth > threshold_nesting_depth)
+                        {
+                                nestingDepths[filePath] = fileBuilder;
+                                nestingDepths[builder.FunctionName] = builder;
                         }
                         builders[filePath] = fileBuilder;
                         builders[builder.FunctionName] = builder;
                 }
         });
-}
-
-// Helper function for counting children of node.
-function childrenLength(node)
-{
-        var key, child;
-        var count = 0;
-	for (key in node)
-	{
-		if (node.hasOwnProperty(key))
-		{
-			child = node[key];
-			if (typeof child === 'object' && child !== null && key != 'parent') 
-			{
-				count++;
-                        }
-                }
-        }
-	return count;
 }
 
 // Helper function for printing out function name.
