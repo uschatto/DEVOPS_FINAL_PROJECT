@@ -107,7 +107,6 @@ async function runFuzzer(n)
             if (!indexAlreadyFuzzed.includes(rand))
                 {
                         indexAlreadyFuzzed.push(rand)
-                        console.log(javaPaths[rand])
                         fuzzer.mutation(javaPaths[rand])
                         count = count - 1
                 }
@@ -227,12 +226,11 @@ async function deletedb()
 }
 
 (async () => {
-    await deletedb();
-    console.log('DB deleted');
     if(process.argv.length > 2){
-    console.log('DB deleted');
         await runFuzzer(process.argv[2]);
     }
     //console.log('Final: ', test_dic);
     await displaySorted();
+    await deletedb();
+    console.log('DB deleted');
 })();
