@@ -60,3 +60,9 @@ Udita Chattopadhyay (uschatto)
 
 ### Task 3: Test prioritization analysis 
 - Run the command ```pipeline useful-tests -c 100```
+
+### Task 4: Static analysis for checkbox.io
+- Run the command ```pipeline build checkbox.io```
+<p align="center">
+<img src ="https://github.ncsu.edu/cscdevops-spring2020/DEVOPS-16/blob/M2/img/checkboxio_build.PNG" width="800" height="350">
+</p>
