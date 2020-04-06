@@ -69,5 +69,5 @@ Udita Chattopadhyay (uschatto)
   - MaxNestingDepth: Count the max number of if statements in a function (>5)
 
 <p align="center">
-<img src ="https://github.ncsu.edu/cscdevops-spring2020/DEVOPS-16/blob/M2/img/checkboxio_build.PNG" width="800" height="350">
+<img src ="https://media.github.ncsu.edu/user/12214/files/c86f0c80-7827-11ea-9d13-0651bed81538" width="600" height="350">
 </p>
