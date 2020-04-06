@@ -1,12 +1,12 @@
 ---
 - name: Copy the build file
-  copy:
-    src: build.yml
+  template:
+    src: build.yml.j2
     dest: ~/build.yml
 
 - name: Copy the static analysis tester
-  copy:
-    src: analysis.js
+  template:
+    src: analysis.js.j2
     dest: ~/analysis.js 
 
 - name: Create a build job
