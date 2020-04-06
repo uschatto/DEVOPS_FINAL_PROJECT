@@ -45,6 +45,16 @@ Udita Chattopadhyay (uschatto)
 
 [Screencast Milestone2]
 
+Experiences:
+ - Got to know how to do time sensitive testing. 
+ - It can take up to 3-4 hours to have a good report. So we tried to make the code as structured as possible and also tried to use up the max space for VM while also ensuring the host system doesn’t get slow.
+ - It was great to learn how do code smell for the code. Many times the logic of the function becomes complicated and it is hard to catch everything during code review. But, by doing this exercise we came to know how other tools like SonarQube might be doing code smell check.
+ - By implementing fuzzing logic we understood how to search for most useful test cases out of lot of test cases. So, while deploying application we can run only useful test cases as a part of regression testing, that can reduce the time and check significant  functionalities.
+ - Intitially we faced challenge in setting up the fuzzer code.
+ - While running static analysis code on the checkbox.io repo, there were some challenges we faced to learn and make it work using esprima.
+ - It was interesting to gather useful information in the form of report from the output of test cases.
+ - Regardless of whether the tests passed, we got the opportunity to implement the code smells part where having a readable code and great coding practices can can help maintaining the code.
+
 ### Task 1: Automatically configure a build environment 
 - Run the command ```pipeline setup --gh-user <username> --gh-pass <password>```
 <p align="center">
