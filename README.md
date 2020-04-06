@@ -8,6 +8,8 @@ Ketaki Kothavade (kmkothav)
 
 Udita Chattopadhyay (uschatto)
 
+* Note: This report contains both Milestone 1 and Milestone 2 tasks. 
+
 ### Milestone 1
 [Checkpoint 1](https://github.ncsu.edu/cscdevops-spring2020/DEVOPS-16/blob/M1/CHECKPOINT.md#checkpoint-1)
 
@@ -41,6 +43,8 @@ Udita Chattopadhyay (uschatto)
 ## Milestone 2
 [Checkpoint 1](https://github.ncsu.edu/cscdevops-spring2020/DEVOPS-16/blob/M2/CHECKPOINT.md#checkpoint-1)
 
+[Screencast Milestone2]
+
 ### Task 1: Automatically configure a build environment 
 - Run the command ```pipeline setup --gh-user <username> --gh-pass <password>```
 <p align="center">
@@ -54,3 +58,16 @@ Udita Chattopadhyay (uschatto)
 </p>
 
 
+### Task 3: Test prioritization analysis 
+- Run the command ```pipeline useful-tests -c 100```
+
+### Task 4: Static analysis for checkbox.io
+- Run the command ```pipeline build checkbox.io```
+- It throws error if the following things eceeded: 
+  - Long method: Detect long methods (>100 LOC).
+  - Message Chains: Detect message chains (for .) (>10 chains)
+  - MaxNestingDepth: Count the max number of if statements in a function (>5)
+
+<p align="center">
+<img src ="https://media.github.ncsu.edu/user/12214/files/c86f0c80-7827-11ea-9d13-0651bed81538" width="600" height="350">
+</p>
