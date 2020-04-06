@@ -1,0 +1,36 @@
+---
+- job:
+    name: checkbox.io
+    project-type: pipeline
+    dsl: |
+      node {
+          stage('Source') {
+              git "https://github.com/chrisparnin/checkbox.io"
+          }
+          stage('Build') {
+              sh 'sudo systemctl start mongod'
+              sh 'npm install --prefix server-side/site/'
+              sh 'sudo npm install pm2 -g'
+              sh 'cd server-side/site/ && pm2 start server.js &'
+          }
+          stage('Static Analysis') {
+              sh 'sudo cp {{ ansible_env.HOME }}/analysis.js .'
+              sh 'sudo npm install -save esprima chalk'
+              try {
+                   sh 'node analysis.js'
+              }
+              catch(Exception err)
+              {
+                   currentBuild.result = 'FAILURE'
+              }
+          }
+          stage('Test') {
+              sh 'npm test --prefix server-side/site/'
+          }
+          stage('Tear Down Services') {
+              sh 'sudo systemctl stop mongod'
+              dir ('') {
+                 deleteDir()
+              }
+          }
+         }
