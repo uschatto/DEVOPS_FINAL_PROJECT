@@ -63,6 +63,11 @@ Udita Chattopadhyay (uschatto)
 
 ### Task 4: Static analysis for checkbox.io
 - Run the command ```pipeline build checkbox.io```
+- It throws error if the following things eceeded: 
+  - Long method: Detect long methods (>100 LOC).
+  - Message Chains: Detect message chains (for .) (>10 chains)
+  - MaxNestingDepth: Count the max number of if statements in a function (>5)
+
 <p align="center">
 <img src ="https://github.ncsu.edu/cscdevops-spring2020/DEVOPS-16/blob/M2/img/checkboxio_build.PNG" width="800" height="350">
 </p>
