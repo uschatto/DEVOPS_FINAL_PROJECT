@@ -53,6 +53,7 @@ Experiences:
  - Intitially we faced challenge in setting up the fuzzer code.
  - While running static analysis code on the checkbox.io repo, there were some challenges we faced to learn and make it work using esprima.
  - It was interesting to gather useful information in the form of report from the output of test cases.
+ - Regardless of whether the tests passed, we got the opportunity to implement the code smells part where having a readable code and great coding practices can can help maintaining the code.
 
 ### Task 1: Automatically configure a build environment 
 - Run the command ```pipeline setup --gh-user <username> --gh-pass <password>```
