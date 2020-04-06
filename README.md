@@ -8,6 +8,8 @@ Ketaki Kothavade (kmkothav)
 
 Udita Chattopadhyay (uschatto)
 
+* Note: This report contains both Milestone 1 and Milestone 2 tasks. 
+
 ### Milestone 1
 [Checkpoint 1](https://github.ncsu.edu/cscdevops-spring2020/DEVOPS-16/blob/M1/CHECKPOINT.md#checkpoint-1)
 
@@ -41,6 +43,8 @@ Udita Chattopadhyay (uschatto)
 ## Milestone 2
 [Checkpoint 1](https://github.ncsu.edu/cscdevops-spring2020/DEVOPS-16/blob/M2/CHECKPOINT.md#checkpoint-1)
 
+[Screencast Milestone2]
+
 ### Task 1: Automatically configure a build environment 
 - Run the command ```pipeline setup --gh-user <username> --gh-pass <password>```
 <p align="center">
@@ -54,3 +58,5 @@ Udita Chattopadhyay (uschatto)
 </p>
 
 
+### Task 3: Test prioritization analysis 
+- Run the command ```pipeline useful-tests -c 100```
