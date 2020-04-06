@@ -36,7 +36,7 @@ function main()
         }	
 
         // Report functions/file exceeding threshold values
-        console.log(chalk.red(`The following exceeded the max message chains threshold value of ${threshold_message_chains} : `));
+        console.log(chalk.red(`\nThe following exceeded the max message chains threshold value of ${threshold_message_chains} : `));
         for( var node in messageChains )
         {
                 var messageChain = builders[node];
@@ -44,7 +44,7 @@ function main()
                 error = true;
         }
 
-        console.log(chalk.red(`The following exceeded the long method threshold value of ${threshold_long_method} : `));
+        console.log(chalk.red(`\nThe following exceeded the long method threshold value of ${threshold_long_method} : `));
         for( var node in longMethods ) 
         {
                 var longMethod = builders[node];
@@ -52,7 +52,7 @@ function main()
                 error = true;
         }
 
-        console.log(chalk.red(`The following exceeded the max nesting depth threshold value of ${threshold_nesting_depth} : `));
+        console.log(chalk.red(`\nThe following exceeded the max nesting depth threshold value of ${threshold_nesting_depth} : `));
         for( var node in nestingDepths )
         {
                 var nestingDepth = builders[node]; 
@@ -99,6 +99,7 @@ function FileBuilder()
 		console.log("Filename : " + this.FileName);
         }
 }
+var i = 0;
 
 // A function following the Visitor pattern.
 // Annotates nodes with parent objects.
@@ -114,6 +115,30 @@ function traverseWithParents(object, visitor)
             {
 		child.parent = object;
 		traverseWithParents(child, visitor);
+            }
+        }
+    }
+}
+
+function nested_depth(builder,object,depth)
+{
+    builder.MaxNestingDepth = Math.max(depth,builder.MaxNestingDepth)
+    for (key in object) {
+        if (object.hasOwnProperty(key)) {
+            child = object[key];
+            if (typeof child === 'object' && child !== null && key != 'parent') 
+            {
+                child.parent = object;
+                if(object.type === 'IfStatement' && object.alternate === null){
+                    nested_depth(builder,child,depth+1)
+                }
+                else if(object.type === 'IfStatement'){
+                    nested_depth(builder,object.consequent,depth+1)
+                    nested_depth(builder,object.alternate,depth)
+                }
+                else{
+                    nested_depth(builder,child,depth)
+                }
             }
         }
     }
@@ -155,29 +180,15 @@ function complexity(filePath)
                                                 builder.MaxMessageChain = Math.max(builder.MaxMessageChain,length);
                                         });
                                 }
-
-                                var maxdepth = 0;
-                                //The max nesting depth of If in a function
-                                if(child_.type == 'IfStatement')
-                                {
-                                         var s = 0;
-                                         traverseWithParents(child_, function(_child_)
-                                         {
-                                                 if(_child_.type == 'IfStatement')
-                                                 {
-                                                        if(_child_.nextSibling){
-                                                                s = s + 1;
-                                                         }
-                                                         maxdepth = maxdepth + 1;       
-                                                 }
-                                         });
-                                         maxdepth = maxdepth - s;
-                                         //Function to check and put the max of the maxdepth and MaxNestingDepth as the final max value
-                                         builder.MaxNestingDepth= Math.max(builder.MaxNestingDepth,maxdepth);
-                                }
                         });
 
-                        
+                        traverseWithParents(node, function(node){
+                                var depth = 0
+                                if (node.type === 'IfStatement'){
+                                      nested_depth(builder,node,depth)
+                                }              
+                        });
+
                         
                         if(builder.MaxMessageChain > threshold_message_chains)
                         {
@@ -198,6 +209,25 @@ function complexity(filePath)
                         builders[builder.FunctionName] = builder;
                 }
         });
+}
+
+// Helper function for counting children of node. 
+function childrenLength(node)
+{
+        var key, child;
+        var count = 0;
+        for (key in node)
+        {
+                if (node.hasOwnProperty(key))
+                {
+                        child = node[key];
+                        if (typeof child === 'object' && child !== null && key != 'parent')
+                        {
+                                 count++;
+                        }
+                }
+        } 
+        return count;
 }
 
 // Helper function for printing out function name.
