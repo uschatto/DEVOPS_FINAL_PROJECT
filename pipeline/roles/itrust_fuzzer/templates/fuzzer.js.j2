@@ -94,7 +94,7 @@ async function runFuzzer(n)
     let javaPaths = getFilesRecursively('iTrust2-v6/iTrust2/src/main/java/edu/ncsu/csc/itrust2')
     let arrayLength = javaPaths.length
     try{
-        child.execSync('cd iTrust2-v6/iTrust2 && sudo mvn -f pom-data.xml process-test-classes', {encoding: 'utf-8'});
+        child.execSync('cd iTrust2-v6/iTrust2 && sudo mvn -f pom-data.xml process-test-classes', {'stdio': 'ignore'});
         }
     catch(e){}
     while (n != 0) {
@@ -113,12 +113,12 @@ async function runFuzzer(n)
             }  
             
         try{
-            child.execSync('cd iTrust2-v6/iTrust2 && sudo mvn clean test verify')
+            child.execSync('cd iTrust2-v6/iTrust2 && sudo mvn clean test verify',{'stdio': 'ignore'})
             // await sleep(120000);
             await calcTests();
             n = n - 1;
-            console.log(n);
-            console.log('BUILD PASSED');
+            // console.log(n);
+            // console.log('BUILD PASSED');
             try {
                 child.execSync('cd iTrust2-v6/iTrust2 && git checkout src/main/java/edu/ncsu/csc/itrust2/')
             }
@@ -129,11 +129,11 @@ async function runFuzzer(n)
                 // await sleep(12000);
                 await calcTests();
                 n = n -1;
-                console.log(n);
-                console.log('BUILD FAILURE');
+                // console.log(n);
+                // console.log('BUILD FAILURE');
             }
             else {
-                console.log("COMPILATION FAILURE")
+                // console.log("COMPILATION FAILURE")
             }
             try {
                 child.execSync('cd iTrust2-v6/iTrust2 && git checkout src/main/java/edu/ncsu/csc/itrust2/')
@@ -219,7 +219,7 @@ async function deletedb()
         if (error)
           return console.error(error.message);
 
-        console.log('Deleted Row(s):', results.affectedRows);
+        // console.log('Deleted Row(s):', results.affectedRows);
       });
     await connection.end()
 
@@ -232,5 +232,5 @@ async function deletedb()
     //console.log('Final: ', test_dic);
     await displaySorted();
     await deletedb();
-    console.log('DB deleted');
+    // console.log('DB deleted');
 })();
