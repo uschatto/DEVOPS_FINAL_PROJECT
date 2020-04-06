@@ -15,9 +15,6 @@ Udita Chattopadhyay (uschatto)
 
 [Screencast Milestone1](https://drive.google.com/open?id=1i3DAs5i-KBCxpR2hU6X8smYrQH9itM-Y)
 
-### Milestone 2
-[Checkpoint 1](https://github.ncsu.edu/cscdevops-spring2020/DEVOPS-16/blob/M2/CHECKPOINT.md#checkpoint-1)
-
 ## The following tasks have been successfully achieved:
 
 - pipeline setup
@@ -38,4 +35,14 @@ Udita Chattopadhyay (uschatto)
 
 <p align="center">
 <img src ="https://github.ncsu.edu/cscdevops-spring2020/DEVOPS-16/blob/M1/img/pipeline.png" width="800" height="350">
+</p>
+
+
+## Milestone 2
+[Checkpoint 1](https://github.ncsu.edu/cscdevops-spring2020/DEVOPS-16/blob/M2/CHECKPOINT.md#checkpoint-1)
+
+# Task 1: Automatically configure a build environment and build job 
+- Run the command ```pipeline setup --gh-user <username> --gh-pass <password>```
+<p align="center">
+<img src ="https://github.ncsu.edu/cscdevops-spring2020/DEVOPS-16/blob/M2/img/Jenkins_view.PNG" width="800" height="350">
 </p>
