@@ -72,7 +72,7 @@ Experiences:
 - Run the command ```pipeline useful-tests -c 100```
 
 <p align="center">
-<img src ="https://github.ncsu.edu/cscdevops-spring2020/DEVOPS-16/blob/M2/img/usefultest.PNG" width="800" height="350">
+<img src ="https://github.ncsu.edu/cscdevops-spring2020/DEVOPS-16/blob/M2/img/usefultest.PNG" width="500" height="400">
 </p>
 
 ### Task 4: Static analysis for checkbox.io
