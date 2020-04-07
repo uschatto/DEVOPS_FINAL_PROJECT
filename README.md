@@ -43,7 +43,7 @@ Udita Chattopadhyay (uschatto)
 ## Milestone 2
 [Checkpoint 1](https://github.ncsu.edu/cscdevops-spring2020/DEVOPS-16/blob/M2/CHECKPOINT.md#checkpoint-1)
 
-[Screencast Milestone2]
+[Screencast Milestone2](https://drive.google.com/open?id=1M4VL5EBQZfIRxL_FsLm1jkz6NA2dkNMh)
 
 Experiences:
  - Got to know how to do time sensitive testing. 
