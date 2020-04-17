@@ -24,3 +24,29 @@
   apt:
     name: "nodejs={{ nodejs_version|regex_replace('x', '') }}*"
     state: present
+
+#Maven
+- name: Install Maven
+  apt: name=maven
+  become: yes
+
+#Chrome
+- name: Add google chrome key
+  apt_key: 
+    url: https://dl-ssl.google.com/linux/linux_signing_key.pub 
+    state: present
+  become: yes
+
+- name: Ensure google chrome repo present
+  apt_repository:
+    repo: "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main"
+    filename: "google-chrome"
+    state: present
+    update_cache: yes
+  become: yes
+
+- name: Ensure google chrome present
+  apt:
+    name: google-chrome-stable
+    state: present
+  become: yes

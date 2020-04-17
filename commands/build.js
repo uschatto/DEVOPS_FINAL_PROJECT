@@ -19,9 +19,9 @@ exports.builder = yargs => {
 };
 
 exports.handler = async argv => {
-    const {} = argv;
+    const { app } = argv;
     (async () => {
-            await run();
+        await run(app);
     })();
 };
 
@@ -56,15 +56,23 @@ async function triggerBuild(job) {
 
 }
 
-async function run(file, inventory) {
+async function run(app) {
 
-    console.log(chalk.blueBright(`Triggering build for ${process.env.JENKINS_JOB_NAME}`));
-    let buildId = await triggerBuild(process.env.JENKINS_JOB_NAME).catch( e => console.log(e));
+    let job_name = "";
+
+    if(app == "iTrust"){
+        job_name = process.env.JENKINS_JOB_ITRUST;
+    }else if(app == "checkbox.io"){
+      job_name = process.env.JENKINS_JOB_NAME;
+    }
+
+    console.log(chalk.blueBright(`Triggering build for ${job_name}`));
+    let buildId = await triggerBuild(job_name).catch( e => console.log(e));
     
     console.log(chalk.blueBright(`Build number :  ${buildId}`));
 
     console.log(chalk.green(`Build output`));
-    var log = jenkins.build.logStream(process.env.JENKINS_JOB_NAME, buildId);
+    var log = jenkins.build.logStream(job_name, buildId);
  
     log.on('data', function(text) {
       process.stdout.write(text);

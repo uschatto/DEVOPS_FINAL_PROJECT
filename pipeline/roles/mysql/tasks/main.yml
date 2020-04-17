@@ -1,0 +1,63 @@
+---
+  - name: Install mysql-server and  setuptools
+    become: yes
+    apt:
+      name: ['mysql-server','python-setuptools']
+      state: present
+      update_cache: yes
+      cache_valid_time: 3600
+
+  - name: pip install mysql-python
+    become: yes
+    pip:
+      name: pymysql
+      state: present
+
+  - name: Start the MySql service
+    become: yes
+    service:
+      name: mysql
+      state: started
+      enabled: true
+
+  - name: update mysql root password for all root accounts
+    become: yes
+    mysql_user:
+      login_user: root
+      login_password: ''
+      name: root
+      password: "{{ mysql_root_password }}"
+      priv: "*.*:ALL,GRANT"
+      login_unix_socket: /var/run/mysqld/mysqld.sock
+      check_implicit_admin: yes
+
+  - name: Remove root accounts that are accessible from outside the localhost
+    mysql_user: 
+      login_user: root
+      login_password: "{{ mysql_root_password }}"
+      name: root
+      host: "!localhost"
+      state: absent
+      login_unix_socket: /var/run/mysqld/mysqld.sock
+
+  - name: Remove anonymous-user accounts
+    mysql_user:
+      login_user: root
+      login_password: "{{ mysql_root_password }}"
+      name: ''
+      state: absent
+      login_unix_socket: /var/run/mysqld/mysqld.sock  
+
+
+  - name: Remove the test database
+    mysql_db: 
+      login_user: root
+      login_password: "{{ mysql_root_password }}"
+      name: test
+      state: absent
+      login_unix_socket: /var/run/mysqld/mysqld.sock
+
+
+  - name: copy .my.cnf with root credentials to jenkins vm
+    become: yes
+    copy: src=.my.cnf.j2 dest=/root/.my.cnf owner=root mode=0600
