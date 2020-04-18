@@ -6,7 +6,7 @@ const fs = require('fs');
 const sshSync = require('../lib/ssh');
 
 var config = {};
-var ids = {};
+var do_ids = {};
 // Retrieve our api token from the environment variables.
 
 exports.command = 'prod <up>';
@@ -75,8 +75,8 @@ class DigitalOceanProvider{
         if(response.statusCode == 202)
         {
                 console.log(chalk.green(`Created droplet id ${body['droplet']['id']}`));
-                if ( !ids.hasOwnProperty(name) ){
-                  ids[name] = body['droplet']['id'];
+                if ( !do_ids.hasOwnProperty(name) ){
+                  do_ids[name] = [body['droplet']['id']];
                 }
         }
     }
@@ -90,11 +90,35 @@ class DigitalOceanProvider{
         );
         let key_list = []
         let keyids_list = (JSON.parse(key_response.body))['ssh_keys'];
-        console.log("SSH Keys ",keyids_list);
+        // console.log("SSH Keys ",keyids_list);
         keyids_list.forEach(element => {
           key_list.push(element['id'])
         });
         return key_list
+    }
+
+    async get_ips(do_ids){
+      let ip_url = 'https://api.digitalocean.com/v2/droplets/'
+      for (var key in do_ids)
+      {
+        let response = await got(ip_url+do_ids[key][0] , {headers: headers})
+               .catch(err => console.error(`dropletInfo ${err}`));
+        if ( !response ) return;
+        let body = JSON.parse(response.body)
+        let droplet = body['droplet'];
+        while ((droplet.networks.v4).length == 0){
+          response = await got(ip_url+do_ids[key][0] , {headers: headers})
+                .catch(err => console.error(`dropletInfo ${err}`));
+          if ( !response ) return;
+          body = JSON.parse(response.body)
+          droplet = body['droplet'];
+        }
+        for( let ipv4 of droplet.networks.v4 )
+        {
+          // console.log('Ipv4'," ", ipv4.ip_address)
+          do_ids[key].push(ipv4.ip_address)
+        }
+      }
     }
 
 }
@@ -108,7 +132,9 @@ async function run() {
   for(var i = 0; i < names.length; i++){
     await client.createVm(names[i], region, image, key_list);
   }
-  console.log("Droplet Ids: ", ids)
+  await client.get_ips(do_ids)
+  console.log("Droplet Ids: ", do_ids)
+  // await client.inventory(do_ids)
 }
 
   
