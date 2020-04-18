@@ -121,6 +121,28 @@ class DigitalOceanProvider{
       }
     }
 
+    async inventory(do_ids){
+        var data = fs.readFileSync(__dirname+'/../pipeline/inventory.ini','utf-8');
+        // console.log("Data:", data)
+        let data_lines = data.split('\n')
+        // console.log(data_lines)
+        for (var key in do_ids){
+          if (!data_lines.includes('['+key+']'))
+            {
+              data_lines.push('['+key+']')
+              data_lines.push(do_ids[key][1]+"  ansible_ssh_private_key_file="+ __dirname+"/../devops  ansible_user=root")
+            }
+          else
+            {
+              let index = data_lines.indexOf('['+key+']')
+              data_lines[index+1] = do_ids[key][1]+"  ansible_ssh_private_key_file="+ __dirname+"/../devops  ansible_user=root"
+            }
+        }
+        // console.log("File:",data_lines)
+        data = data_lines.join('\n')
+        console.log("Data: ",data)
+        fs.writeFileSync(__dirname+'/../pipeline/inventory.ini', data, 'utf-8');
+      }
 }
 
 async function run() {
@@ -134,7 +156,7 @@ async function run() {
   }
   await client.get_ips(do_ids)
   console.log("Droplet Ids: ", do_ids)
-  // await client.inventory(do_ids)
+  await client.inventory(do_ids)
 }
 
   
