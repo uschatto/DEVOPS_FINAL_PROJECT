@@ -11,8 +11,14 @@
     "chalk": "^3.0.0",
     "dot-env": "0.0.1",
     "dotenv": "^8.2.0",
+    "generate-rsa-keypair": "^0.2.1",
     "got": "^10.7.0",
     "jenkins": "^0.28.0",
+    "keypair": "^1.0.1",
+    "node-forge": "^0.9.1",
+    "node-rsa": "^1.0.8",
+    "path": "^0.12.7",
+    "sshpk": "^1.16.1",
     "yargs": "^15.1.0"
   }
 }

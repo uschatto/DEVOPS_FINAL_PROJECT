@@ -1,8 +1,11 @@
 const child = require('child_process');
 const chalk = require('chalk');
 const os = require('os');
+const path = require('path')
 const got = require('got');
 const fs = require('fs');
+var generateRSAKeypair = require('generate-rsa-keypair')
+const sshpk = require('sshpk');
 const sshSync = require('../lib/ssh');
 
 var config = {};
@@ -143,13 +146,60 @@ class DigitalOceanProvider{
         console.log("Data: ",data)
         fs.writeFileSync(__dirname+'/../pipeline/inventory.ini', data, 'utf-8');
       }
+
+    async create_keypair(){
+      var pair = generateRSAKeypair()
+      const pemKey = sshpk.parseKey(pair.public, 'pem');
+      const sshRsa = pemKey.toString('ssh');
+      console.log("SSH_RSA:",sshRsa)
+      var data_rsa = {
+        "name":"devops",
+        "public_key": sshRsa
+      } 
+      let response = await got.post( "https://api.digitalocean.com/v2/account/keys" , 
+      {
+        headers: headers,
+        body: JSON.stringify(data_rsa) 
+      }).catch(err => console.error(`dropletInfo ${err}`));
+      fs.writeFileSync(__dirname+'/../devops',pair.private)
+      fs.chmodSync(__dirname+'/../devops', 0o400)
+    }
+
+    async listvms(){ 
+      let response = await got( "https://api.digitalocean.com/v2/droplets?page=1&per_page=100" , 
+      {
+        headers: headers
+      }).catch(err => console.error(`dropletInfo ${err}`));
+      let vm_list = []
+      let vm_list_api = (JSON.parse(response.body))['droplets']
+      vm_list_api.forEach(element => 
+        vm_list.push(element['name']))
+
+      return vm_list
+    }
 }
 
 async function run() {
   let client = new DigitalOceanProvider();
+  let vm_list = await client.listvms()
+  // console.log("VMLIST:", vm_list)
+  let names = []
+  var names_list = ['monitor','iTrust','checkbox.io'];
+  names_list.forEach(element => {
+    if (!vm_list.includes(element)){
+      names.push(element)
+    }
+  })
+  // console.log("VM_LIST:",names)
+  if(names.length == 0){
+    console.log("VMs already exist. First delete them.")
+    return
+  }
+  if (!fs.existsSync(path.resolve(__dirname+'/../devops'))){
+    await client.create_keypair();
+  }
   var image = "ubuntu-18-04-x64";
   var region = "blr1";
-  var names = ['monitor','blue','green'];
   let key_list = await client.get_keys();
   for(var i = 0; i < names.length; i++){
     await client.createVm(names[i], region, image, key_list);
@@ -157,8 +207,4 @@ async function run() {
   await client.get_ips(do_ids)
   console.log("Droplet Ids: ", do_ids)
   await client.inventory(do_ids)
-}
-
-  
-
-  
+  }
