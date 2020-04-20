@@ -1,0 +1,6 @@
+- name: Copy files into dashboard
+  copy: 
+    src: "{{ role_path }}/dashboard"
+    dest: ~/
+    directory_mode: yes
+    

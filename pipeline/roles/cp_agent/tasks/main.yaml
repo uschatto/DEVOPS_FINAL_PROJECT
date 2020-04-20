@@ -1,0 +1,6 @@
+- name: Copy files into agent
+  copy: 
+    src: "{{ role_path }}/agent"
+    dest: ~/
+    directory_mode: yes
+    

@@ -1,0 +1,15 @@
+---
+- hosts: monitor
+  roles:
+    - cp_dash
+    - redis_node
+
+- hosts: checkbox.io
+  roles:
+    - cp_agent
+    - redis_node
+
+- hosts: iTrust
+  roles:
+    - cp_agent
+    - redis_node

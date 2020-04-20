@@ -1,0 +1,45 @@
+---
+- name: Install redis
+  apt:
+    name: redis-server
+    state: latest
+    update_cache: yes
+  become: yes
+
+- name: Install the gpg key for nodejs LTS
+  become: yes
+  apt_key:
+    url: "https://deb.nodesource.com/gpgkey/nodesource.gpg.key"
+    state: present
+
+- name: Install the nodejs LTS repos
+  become: yes
+  apt_repository:
+    repo: "deb https://deb.nodesource.com/node_{{ nodejs_version }} {{ ansible_distribution_release }} main"
+    state: present
+    update_cache: yes
+
+- name: Install the nodejs and nginx
+  become: yes
+  apt:
+    name: nodejs
+    state: present
+
+- name: Ensure Node.js and npm are installed.
+  become: yes
+  apt:
+    name: "nodejs={{ nodejs_version|regex_replace('x', '') }}*"
+    state: present
+
+## Run npm install
+- name: Run npm install on monitor
+  become: yes
+  npm: 
+    path: ~/dashboard/
+  when: ansible_hostname == 'monitor'
+
+- name: RUn npm install on iTrust2 and checkbox.io
+  become: yes
+  npm:
+    path: ~/agent/
+  when: ansible_hostname != 'monitor' 

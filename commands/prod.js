@@ -39,6 +39,7 @@ exports.handler = async argv => {
     (async () => {
         if (up == 'up'){
           await run();
+          await run_playbook();
         }
     })();
 };
@@ -129,16 +130,31 @@ class DigitalOceanProvider{
         // console.log("Data:", data)
         let data_lines = data.split('\n')
         // console.log(data_lines)
+        let config_lines = {}
         for (var key in do_ids){
           if (!data_lines.includes('['+key+']'))
             {
               data_lines.push('['+key+']')
-              data_lines.push(do_ids[key][1]+"  ansible_ssh_private_key_file="+ __dirname+"/../devops  ansible_user=root")
+              data_lines.push(do_ids[key][1]+"  ansible_ssh_private_key_file=/bakerx/pipeline/devops  ansible_user=root")
+              data_lines.push('['+key+':vars]')
+              data_lines.push('ansible_ssh_common_args=\'-o StrictHostKeyChecking=no\'')
             }
           else
             {
               let index = data_lines.indexOf('['+key+']')
-              data_lines[index+1] = do_ids[key][1]+"  ansible_ssh_private_key_file="+ __dirname+"/../devops  ansible_user=root"
+              config_lines = {
+                1: do_ids[key][1]+"  ansible_ssh_private_key_file=/bakerx/pipeline/devops  ansible_user=root",
+                2: '['+key+':vars]',
+                3: 'ansible_ssh_common_args=\'-o StrictHostKeyChecking=no\''
+              }
+              for(var i = 1; i < 4; i++){
+                if (index + i < data_lines.length){
+                  data_lines[index+i] = config_lines[i]
+                }
+                else{
+                  data_lines.push(config_lines[i])
+                }
+              }
             }
         }
         // console.log("File:",data_lines)
@@ -161,8 +177,8 @@ class DigitalOceanProvider{
         headers: headers,
         body: JSON.stringify(data_rsa) 
       }).catch(err => console.error(`dropletInfo ${err}`));
-      fs.writeFileSync(__dirname+'/../devops',pair.private)
-      fs.chmodSync(__dirname+'/../devops', 0o400)
+      fs.writeFileSync(__dirname+'/../pipeline/devops',pair.private)
+      fs.chmodSync(__dirname+'/../pipeline/devops', 0o400)
     }
 
     async listvms(){ 
@@ -195,7 +211,7 @@ async function run() {
     console.log("VMs already exist. First delete them.")
     return
   }
-  if (!fs.existsSync(path.resolve(__dirname+'/../devops'))){
+  if (!fs.existsSync(path.resolve(__dirname+'/../pipeline/devops'))){
     await client.create_keypair();
   }
   var image = "ubuntu-18-04-x64";
@@ -206,5 +222,11 @@ async function run() {
   }
   await client.get_ips(do_ids)
   console.log("Droplet Ids: ", do_ids)
-  await client.inventory(do_ids)
-  }
+  await client.inventory(do_ids) 
+}
+
+async function run_playbook(){
+  console.log('Running playbook for control plane')
+  result = sshSync('ansible-playbook /bakerx/pipeline/prod.yml -i /bakerx/pipeline/inventory.ini', 'vagrant@192.168.33.11');
+  if( result.error ) { process.exit( result.status ); }
+}
