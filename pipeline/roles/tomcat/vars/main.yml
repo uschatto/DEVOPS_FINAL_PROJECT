@@ -1,0 +1,4 @@
+
+tomcat_tar_file_path: https://downloads.apache.org/tomcat/tomcat-9/v9.0.34/bin/apache-tomcat-9.0.34.tar.gz
+admin_user: admin
+admin_password: admin
