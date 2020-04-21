@@ -85,3 +85,8 @@ Experiences:
 <p align="center">
 <img src ="https://media.github.ncsu.edu/user/12214/files/c86f0c80-7827-11ea-9d13-0651bed81538" width="600" height="350">
 </p>
+
+
+## Milestone 3
+[Checkpoint 1](https://github.ncsu.edu/cscdevops-spring2020/DEVOPS-16/blob/M3/CHECKPOINT.md#checkpoint-1)
+
