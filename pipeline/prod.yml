@@ -13,3 +13,6 @@
   roles:
     - cp_agent
     - redis_node
+
+
+## Install forever, run node bin/www with forever

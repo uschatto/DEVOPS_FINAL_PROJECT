@@ -10,6 +10,7 @@ const sshSync = require('../lib/ssh');
 
 var config = {};
 var do_ids = {};
+let firewall_id = '';
 // Retrieve our api token from the environment variables.
 
 exports.command = 'prod <up>';
@@ -39,6 +40,7 @@ exports.handler = async argv => {
     (async () => {
         if (up == 'up'){
           await run();
+          await sleep(60000);
           await run_playbook();
         }
     })();
@@ -188,17 +190,134 @@ class DigitalOceanProvider{
       }).catch(err => console.error(`dropletInfo ${err}`));
       let vm_list = []
       let vm_list_api = (JSON.parse(response.body))['droplets']
+      // console.log("VM_LIST_API:", vm_list_api)
       vm_list_api.forEach(element => 
         vm_list.push(element['name']))
 
       return vm_list
+    }
+
+    async create_firewall(list_do_ids, fire_name){
+      var firewall_data = 
+      {
+        "name": "firewall16",
+        "inbound_rules": [
+          {
+            "protocol": "tcp",
+            "ports": "22-443",
+            "sources": {
+              "addresses": ["0.0.0.0/0"]
+            }
+          },
+          {
+            "protocol": "tcp",
+            "ports": "6379",
+            "sources": {
+              "addresses": ["0.0.0.0/0"]
+            }
+          },
+          {
+            "protocol": "tcp",
+            "ports": "8080",
+            "sources": {
+              "addresses": ["0.0.0.0/0"]
+            }
+          },
+          {
+            "protocol": "tcp",
+            "ports": "9001-9003",
+            "sources": {
+              "addresses": ["0.0.0.0/0"]
+            }
+          },
+          {
+            "protocol": "tcp",
+            "ports": "3000",
+            "sources": {
+              "addresses": ["0.0.0.0/0"]
+            }
+          },
+        ],
+        "outbound_rules": [
+          {
+            "protocol": "tcp",
+            "ports": "all",
+            "destinations": {
+              "addresses": ["0.0.0.0/0"]
+            }
+          },
+          {
+            "protocol": "udp",
+            "ports": "53",
+            "destinations": {
+              "addresses": ["0.0.0.0/0"]
+            }
+          },
+        ]
+      };
+
+      let response = await got.post("https://api.digitalocean.com/v2/firewalls", 
+      {
+        headers:headers,
+        body: JSON.stringify(firewall_data)
+      }).catch( err => 
+        console.error(chalk.red(`createFirewall: ${err}`)) 
+      );
+      let fire_resp = (JSON.parse(response.body))['firewalls']
+      while (fire_resp == null){
+        response = await got("https://api.digitalocean.com/v2/firewalls", { headers:headers })
+        fire_resp = (JSON.parse(response.body))['firewalls']
+      }
+      fire_resp.forEach(element => {
+        if(element['name'] === "firewall16")
+          {            
+            firewall_id = element['id']
+          }
+      }) 
+    }
+
+    async add_droplets_firewall(list_do_ids){ 
+      // Add droplets to to the firewall
+      console.log("Firewall ID:",firewall_id)
+      console.log("LIST DO IDS:",list_do_ids)
+      let data = {
+        "droplet_ids": list_do_ids
+      }
+      let url = "https://api.digitalocean.com/v2/firewalls/"+firewall_id+"/droplets";
+      await got.post(url, 
+      {
+        headers:headers,
+        body: JSON.stringify(data)
+      }).catch( err => 
+        console.error(chalk.red(`AddDropletsToFirewall: ${err}`)) 
+      );
+      // console.log(response.body)
+    }
+
+    async is_firewall(){
+      let response = await got("https://api.digitalocean.com/v2/firewalls",{headers: headers})
+      let fire_resp = (JSON.parse(response.body))['firewalls']
+      let x = 0
+      console.log("FIRE RESP:", fire_resp)
+      if(fire_resp == null)
+      {
+        return 0
+      }
+      fire_resp.forEach(element => {
+        if(element['name'] === "firewall16")
+          {            
+            firewall_id = element['id']
+            x = 1
+          }
+      }) 
+      return x
     }
 }
 
 async function run() {
   let client = new DigitalOceanProvider();
   let vm_list = await client.listvms()
-  // console.log("VMLIST:", vm_list)
+  console.log("VMLIST:", vm_list)
   let names = []
   var names_list = ['monitor','iTrust','checkbox.io'];
   names_list.forEach(element => {
@@ -206,7 +325,7 @@ async function run() {
       names.push(element)
     }
   })
-  // console.log("VM_LIST:",names)
+  console.log("VM_LIST:",names)
   if(names.length == 0){
     console.log("VMs already exist. First delete them.")
     return
@@ -215,7 +334,7 @@ async function run() {
     await client.create_keypair();
   }
   var image = "ubuntu-18-04-x64";
-  var region = "blr1";
+  var region = "nyc3";
   let key_list = await client.get_keys();
   for(var i = 0; i < names.length; i++){
     await client.createVm(names[i], region, image, key_list);
@@ -223,10 +342,27 @@ async function run() {
   await client.get_ips(do_ids)
   console.log("Droplet Ids: ", do_ids)
   await client.inventory(do_ids) 
+  let list_do_ids = []
+  for (var key in do_ids){
+    list_do_ids.push(do_ids[key][0])
+  }
+  let x = await client.is_firewall()
+  console.log(x)
+  if (x == 0){
+    await client.create_firewall(list_do_ids,'firewall16')
+    await client.add_droplets_firewall(list_do_ids,'firewall16')
+  }
+  else{
+    await client.add_droplets_firewall(list_do_ids,'firewall16')
+  }
 }
 
 async function run_playbook(){
   console.log('Running playbook for control plane')
   result = sshSync('ansible-playbook /bakerx/pipeline/prod.yml -i /bakerx/pipeline/inventory.ini', 'vagrant@192.168.33.11');
   if( result.error ) { process.exit( result.status ); }
+}
+
+async function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
 }
