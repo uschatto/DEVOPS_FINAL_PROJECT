@@ -3,4 +3,10 @@
     src: "{{ role_path }}/dashboard"
     dest: ~/
     directory_mode: yes
+
+- name: Copy metric/index.js
+  template:
+    src: index.js.j2
+    dest: ~/dashboard/metrics/index.js
+    backup: yes
     

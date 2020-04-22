@@ -1,4 +1,8 @@
 ---
+- hosts: "monitor,checkbox.io,iTrust"
+  gather_facts: true
+  tasks: []
+
 - hosts: monitor
   roles:
     - cp_dash
@@ -15,4 +19,4 @@
     - redis_node
 
 
-## Install forever, run node bin/www with forever
+## run node bin/www

@@ -3,4 +3,10 @@
     src: "{{ role_path }}/agent"
     dest: ~/
     directory_mode: yes
+
+- name: Copy index.js template
+  template:
+    src: index.js.j2
+    dest: ~/agent/index.js
+    backup: yes
     

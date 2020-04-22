@@ -38,8 +38,28 @@
     path: ~/dashboard/
   when: ansible_hostname == 'monitor'
 
-- name: RUn npm install on iTrust2 and checkbox.io
+- name: Run npm install on iTrust2 and checkbox.io
   become: yes
   npm:
     path: ~/agent/
-  when: ansible_hostname != 'monitor' 
+  when: ansible_hostname != 'monitor'
+
+## Install forever on checkbox.io and iTrust
+- name: Install forever
+  become: yes
+  npm:
+    name: forever
+    global: yes
+    state: present
+  when: ansible_hostname != 'monitor'
+
+## Run forever stopall and forever start index.js ${server_name}
+- name: forever stopall forever start index.js server_name
+  command: "{{ item }}"
+  when: ansible_hostname != 'monitor'
+  with_items:
+    -  forever stopall
+    -  "forever start agent/index.js {{ ansible_hostname }}"
+
+  
+  

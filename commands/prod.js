@@ -40,7 +40,7 @@ exports.handler = async argv => {
     (async () => {
         if (up == 'up'){
           await run();
-          await sleep(60000);
+          // await sleep(60000);
           await run_playbook();
         }
     })();
@@ -137,7 +137,7 @@ class DigitalOceanProvider{
           if (!data_lines.includes('['+key+']'))
             {
               data_lines.push('['+key+']')
-              data_lines.push(do_ids[key][1]+"  ansible_ssh_private_key_file=/bakerx/pipeline/devops  ansible_user=root")
+              data_lines.push(key+" ansible_host="+do_ids[key][1]+"  ansible_ssh_private_key_file=/bakerx/pipeline/devops  ansible_user=root")
               data_lines.push('['+key+':vars]')
               data_lines.push('ansible_ssh_common_args=\'-o StrictHostKeyChecking=no\'')
             }
@@ -145,7 +145,7 @@ class DigitalOceanProvider{
             {
               let index = data_lines.indexOf('['+key+']')
               config_lines = {
-                1: do_ids[key][1]+"  ansible_ssh_private_key_file=/bakerx/pipeline/devops  ansible_user=root",
+                1:  key+" ansible_host="+do_ids[key][1]+"  ansible_ssh_private_key_file=/bakerx/pipeline/devops  ansible_user=root",
                 2: '['+key+':vars]',
                 3: 'ansible_ssh_common_args=\'-o StrictHostKeyChecking=no\''
               }
