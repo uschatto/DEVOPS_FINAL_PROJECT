@@ -5,8 +5,6 @@ const os = require('os');
 const fs = require('fs');
 
 require('dotenv').config()
-//let url = "http://" + process.env.JENKINS_USER + ":" + process.env.JENKINS_PASS + "@" + process.env.JENKINS_URL
-//const jenkins = require('jenkins')({ baseUrl : url, crumbIssuer: true, promisify: true });
 
 const sshSync = require('../lib/ssh');
 
@@ -14,15 +12,15 @@ exports.command = 'deploy <app>';
 exports.desc = 'Deploy iTrust';
 exports.builder = yargs => {
     yargs.options({
-        file: {
+        itrustFile: {
             describe: 'Provide the path to the main itrust_deploy.yml',
             type: 'string',
-            default: 'pipeline/itrust_deploy.yml'
-        },        
-        app: {
-            describe: 'Provide application name',
-            default: '',
-            type: 'string'
+            default: 'itrust_deploy.yml'
+        },      
+        checkboxFile: {
+            describe: 'Provide the path to the main checkbox_deploy.yml',
+            type: 'string',
+            default: 'checkbox_deploy.yml'
         },
         inventory: {
             alias: 'i',
@@ -34,23 +32,28 @@ exports.builder = yargs => {
 };
 
 exports.handler = async argv => {
-    const { app, inventory } = argv;
+    const { app, itrustFile, checkboxFile, inventory } = argv;
     (async () => {
-        await run(app, inventory);
+        await run(app, itrustFile, checkboxFile, inventory);
     })();
 };
 
-async function run(app, inventory) {
+async function run(app, itrustFile, checkboxFile, inventory) {
+    
+    let basic_filePath = "/bakerx/pipeline/";
+    let inventoryPath = basic_filePath + inventory;
+    let playbook_name = "";
 
-    console.log(inventory);
-    console.log(app);
+    if(app == "iTrust"){
+        playbook_name = basic_filePath + itrustFile;
+        console.log(playbook_name);
+    }else if(app == "checkbox.io"){
+        playbook_name = basic_filePath + checkboxFile;
+        console.log(playbook_name);
+    }
 
-    // let filePath = '/bakerx/'+ file;
-    // let inventoryPath = '/bakerx/' +inventory;
-
-    // console.log(chalk.blueBright('Running ansible script...'));
-    // result = sshSync(`/bakerx/pipeline/run-ansible.sh ${filePath} ${inventoryPath} ${vaultPath} ${ghUser} ${ghPass}`, 'vagrant@192.168.33.11');
-    // if( result.error ) { process.exit( result.status ); }
-
+    console.log('Running playbook for Deployment')
+    result = sshSync(`ansible-playbook ${playbook_name} -i ${inventoryPath}`, 'vagrant@192.168.33.11');
+    if( result.error ) { process.exit( result.status ); }
 
 }
