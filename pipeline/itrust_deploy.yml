@@ -1,6 +1,6 @@
 ---
-- hosts: iTrust
+- hosts: itrust
   gather_facts: true
   become: true
   roles:
-    - deploy_iTrust
+    - deploy_itrust

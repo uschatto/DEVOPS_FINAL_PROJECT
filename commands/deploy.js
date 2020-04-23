@@ -9,7 +9,7 @@ require('dotenv').config()
 const sshSync = require('../lib/ssh');
 
 exports.command = 'deploy <app>';
-exports.desc = 'Deploy iTrust';
+exports.desc = 'Deploy itrust';
 exports.builder = yargs => {
     yargs.options({
         itrustFile: {
