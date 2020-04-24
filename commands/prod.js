@@ -164,23 +164,23 @@ class DigitalOceanProvider{
         fs.writeFileSync(__dirname+'/../pipeline/inventory.ini', data, 'utf-8');
       }
 
-    // async create_keypair(){
-    //   var pair = generateRSAKeypair()
-    //   const pemKey = sshpk.parseKey(pair.public, 'pem');
-    //   const sshRsa = pemKey.toString('ssh');
-    //   console.log("SSH_RSA:",sshRsa)
-    //   var data_rsa = {
-    //     "name":"devops",
-    //     "public_key": sshRsa
-    //   } 
-    //   let response = await got.post( "https://api.digitalocean.com/v2/account/keys" , 
-    //   {
-    //     headers: headers,
-    //     body: JSON.stringify(data_rsa) 
-    //   }).catch(err => console.error(`dropletInfo ${err}`));
-    //   fs.writeFileSync(__dirname+'/../pipeline/devops',pair.private)
-    //   fs.chmodSync(__dirname+'/../pipeline/devops', 0o400)
-    // }
+    async create_keypair(){
+      var pair = generateRSAKeypair()
+      const pemKey = sshpk.parseKey(pair.public, 'pem');
+      const sshRsa = pemKey.toString('ssh');
+      console.log("SSH_RSA:",sshRsa)
+      var data_rsa = {
+        "name":"devops",
+        "public_key": sshRsa
+      } 
+      let response = await got.post( "https://api.digitalocean.com/v2/account/keys" , 
+      {
+        headers: headers,
+        body: JSON.stringify(data_rsa) 
+      }).catch(err => console.error(`dropletInfo ${err}`));
+      fs.writeFileSync(__dirname+'/../pipeline/devops',pair.private)
+      fs.chmodSync(__dirname+'/../pipeline/devops', 0o400)
+    }
 
     async listvms(){ 
       let response = await got( "https://api.digitalocean.com/v2/droplets?page=1&per_page=100" , 
@@ -330,9 +330,9 @@ async function run() {
     console.log("VMs already exist. First delete them.")
     return
   }
-  // if (!fs.existsSync(path.resolve(__dirname+'/../pipeline/devops'))){
-  //   await client.create_keypair();
-  // }
+  if (!fs.existsSync(path.resolve(__dirname+'/../pipeline/devops'))){
+    await client.create_keypair();
+  }
   var image = "ubuntu-18-04-x64";
   var region = "nyc3";
   let key_list = await client.get_keys();
