@@ -9,16 +9,14 @@ class Agent
 {
     memoryLoad()
     {
-       let memoryload = (os.totalmem() - os.freemem())*100/os.totalmem() + " %"
-//       console.log( memoryload );
+       let memoryload = ((os.totalmem() - os.freemem())*100/os.totalmem()).toFixed(2) + " %"
        return memoryload;
     }
     async cpu()
     {
        let load = await si.currentLoad();
-       let cpuload = load['currentload'] + ' %'
-//       console.log("Load:", load['currentload'])
-       return cpuload;
+       let cpuload = load['currentload']
+       return cpuload.toFixed(2) + ' %';
     }
 }
 
