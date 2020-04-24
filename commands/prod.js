@@ -10,21 +10,8 @@ const sshSync = require('../lib/ssh');
 
 var config = {};
 var do_ids = {};
+var headers = '';
 let firewall_id = '';
-
-config.token = process.env.NCSU_DOTOKEN;
-if( !config.token )
-{
-    console.log(chalk`{red.bold NCSU_DOTOKEN is not defined!}`);
-    console.log(`Please set your environment variables with appropriate token.`);
-    console.log(chalk`{italic You may need to refresh your shell in order for your changes to take place.}`);
-    process.exit(1);
-}
-const headers =
-{
-  'Content-Type':'application/json',
-  Authorization: 'Bearer ' + config.token
-};
 
 exports.command = 'prod <up>';
 // Command => pipeline prod up
@@ -36,6 +23,19 @@ exports.builder = yargs => {
 
 exports.handler = async argv => {
     const { up } = argv;
+    config.token = process.env.NCSU_DOTOKEN;
+    if( !config.token )
+    {
+      console.log(chalk`{red.bold NCSU_DOTOKEN is not defined!}`);
+      console.log(`Please set your environment variables with appropriate token.`);
+      console.log(chalk`{italic You may need to refresh your shell in order for your changes to take place.}`);
+      process.exit(1);
+    }
+    headers =
+    {
+      'Content-Type':'application/json',
+      Authorization: 'Bearer ' + config.token
+    };
     (async () => {
         if (up == 'up'){
           await run();
