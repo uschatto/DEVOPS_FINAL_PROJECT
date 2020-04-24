@@ -319,7 +319,7 @@ async function run() {
   let vm_list = await client.listvms()
   console.log("VMLIST:", vm_list)
   let names = []
-  var names_list = ['monitor','iTrust','checkbox.io'];
+  var names_list = ['monitor','itrust','checkbox.io'];
   names_list.forEach(element => {
     if (!vm_list.includes(element)){
       names.push(element)
