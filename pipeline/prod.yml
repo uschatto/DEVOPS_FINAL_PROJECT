@@ -1,5 +1,5 @@
 ---
-- hosts: "monitor,checkbox.io,iTrust"
+- hosts: "monitor,checkbox.io,itrust"
   gather_facts: true
   tasks: []
 
