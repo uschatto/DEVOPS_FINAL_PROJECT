@@ -1,5 +1,5 @@
 ---
-- hosts: "monitor,checkbox.io,itrust"
+- hosts: "monitor,checkbox,itrust"
   gather_facts: true
   tasks: []
 
@@ -8,7 +8,7 @@
     - cp_dash
     - redis_node
 
-- hosts: checkbox.io
+- hosts: checkbox
   roles:
     - cp_agent
     - redis_node

@@ -8,8 +8,8 @@ const path = require('path');
 /// Servers data being monitored.
 var servers = 
 [
-	{name: "checkbox",url:`http://{{ hostvars['checkbox.io']['ansible_host'] }}:3000/`, status: "#cccccc",  scoreTrend : [0]},
-	{name: "iTrust",url:`http://{{ hostvars['iTrust']['ansible_host'] }}:3000/`, status: "#cccccc",  scoreTrend : [0]},
+	{name: "checkbox",url:`http://{{ hostvars['checkbox']['ansible_host'] }}:3000/`, status: "#cccccc",  scoreTrend : [0]},
+	{name: "itrust",url:`http://{{ hostvars['itrust']['ansible_host'] }}:3000/`, status: "#cccccc",  scoreTrend : [0]},
 ];
 
 

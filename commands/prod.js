@@ -39,7 +39,6 @@ exports.handler = async argv => {
     (async () => {
         if (up == 'up'){
           await run();
-          await sleep(60000);
           await run_playbook();
         }
     })();
@@ -84,6 +83,7 @@ class DigitalOceanProvider{
                   do_ids[name] = [body['droplet']['id']];
                 }
         }
+
     }
 
     async get_keys(){
@@ -319,7 +319,7 @@ async function run() {
   let vm_list = await client.listvms()
   console.log("VMLIST:", vm_list)
   let names = []
-  var names_list = ['monitor','itrust','checkbox.io'];
+  var names_list = ['monitor','itrust','checkbox'];
   names_list.forEach(element => {
     if (!vm_list.includes(element)){
       names.push(element)
@@ -339,6 +339,7 @@ async function run() {
   for(var i = 0; i < names.length; i++){
     await client.createVm(names[i], region, image, key_list);
   }
+  await sleep(60000);
   await client.get_ips(do_ids)
   console.log("Droplet Ids: ", do_ids)
   await client.inventory(do_ids) 
