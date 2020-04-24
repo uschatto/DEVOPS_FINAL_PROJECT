@@ -11,15 +11,7 @@ const sshSync = require('../lib/ssh');
 var config = {};
 var do_ids = {};
 let firewall_id = '';
-// Retrieve our api token from the environment variables.
 
-exports.command = 'prod <up>';
-// Command => pipeline prod up
-exports.desc = 'Provision cloud instances and control plane';
-exports.builder = yargs => {
-    yargs.options({
-    });
-};
 config.token = process.env.NCSU_DOTOKEN;
 if( !config.token )
 {
@@ -28,11 +20,18 @@ if( !config.token )
     console.log(chalk`{italic You may need to refresh your shell in order for your changes to take place.}`);
     process.exit(1);
 }
-// Configure our headers to use our token when making REST api requests.
 const headers =
 {
-    'Content-Type':'application/json',
-    Authorization: 'Bearer ' + config.token
+  'Content-Type':'application/json',
+  Authorization: 'Bearer ' + config.token
+};
+
+exports.command = 'prod <up>';
+// Command => pipeline prod up
+exports.desc = 'Provision cloud instances and control plane';
+exports.builder = yargs => {
+    yargs.options({
+    });
 };
 
 exports.handler = async argv => {
@@ -40,7 +39,7 @@ exports.handler = async argv => {
     (async () => {
         if (up == 'up'){
           await run();
-          // await sleep(60000);
+          await sleep(60000);
           await run_playbook();
         }
     })();
@@ -315,6 +314,7 @@ class DigitalOceanProvider{
 }
 
 async function run() {
+  
   let client = new DigitalOceanProvider();
   let vm_list = await client.listvms()
   console.log("VMLIST:", vm_list)

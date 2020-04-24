@@ -10,7 +10,9 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "express": "^4.17.1",
     "redis": "^3.0.2",
     "systeminformation": "^4.23.1"
   }
 }
+

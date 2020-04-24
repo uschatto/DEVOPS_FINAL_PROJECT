@@ -8,7 +8,7 @@ const path = require('path');
 /// Servers data being monitored.
 var servers = 
 [
-	{name: "checkbox.io",url:`http://{{ hostvars['checkbox.io']['ansible_host'] }}:3000/`, status: "#cccccc",  scoreTrend : [0]},
+	{name: "checkbox",url:`http://{{ hostvars['checkbox.io']['ansible_host'] }}:3000/`, status: "#cccccc",  scoreTrend : [0]},
 	{name: "iTrust",url:`http://{{ hostvars['iTrust']['ansible_host'] }}:3000/`, status: "#cccccc",  scoreTrend : [0]},
 ];
 
@@ -64,7 +64,6 @@ function start(app)
 				let payload = JSON.parse(message);
 				server.memoryLoad = payload.memoryLoad;
 				server.cpu = payload.cpu;
-                                server.newmetric = 0;
 				updateHealth(server);
 			}
 		}

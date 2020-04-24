@@ -5,6 +5,7 @@
     state: latest
     update_cache: yes
   become: yes
+  when: ansible_hostname == 'monitor'
 
 - name: Install the gpg key for nodejs LTS
   become: yes
@@ -38,6 +39,7 @@
     path: ~/dashboard/
   when: ansible_hostname == 'monitor'
 
+## Run npm install om checkbox and itrust
 - name: Run npm install on iTrust2 and checkbox.io
   become: yes
   npm:
@@ -51,7 +53,6 @@
     name: forever
     global: yes
     state: present
-  when: ansible_hostname != 'monitor'
 
 ## Run forever stopall and forever start index.js ${server_name}
 - name: forever stopall forever start index.js server_name
@@ -60,6 +61,30 @@
   with_items:
     -  forever stopall
     -  "forever start agent/index.js {{ ansible_hostname }}"
+    -  forever start agent/server.js
+
+## Edit redis.conf
+- name: Change redis ip
+  lineinfile:
+    path: /etc/redis/redis.conf
+    regexp: '^bind 127.0.0.1 ::1'
+    line: 'bind 0.0.0.0'
+
+- name: Restart redis
+  systemd:
+    name: redis-server
+    state: restarted
+
+## Run node bi/www
+- name: Run forever start bin/www
+  command: "{{ item }}"
+  when: ansible_hostname == 'monitor'
+  with_items:
+    - forever stopall
+    - forever start bin/www
+  args:
+    chdir: dashboard
 
   
   
+
