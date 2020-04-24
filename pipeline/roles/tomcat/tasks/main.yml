@@ -1,4 +1,26 @@
 ---
+- name: Update and upgrade apt packages
+  apt:
+    upgrade: yes
+    update_cache: yes
+    cache_valid_time: 86400
+
+- name: install JDK 11
+  apt:
+    name: openjdk-11-jdk
+    state: present
+
+- name: add tomcat group
+  group:
+    name: tomcat
+
+- name: add tomcat user
+  user:
+    name: tomcat
+    group: tomcat
+    home: /user/share/tomcat
+    createhome: no
+
 - name: Check if tomcat exists
   stat:
     path: /tmp/tomcat
@@ -6,7 +28,7 @@
 
 - name: Download tar file for tomcat installation
   get_url:
-    url: {{ tomcat_tar_file_path }}
+    url: "{{ tomcat_tar_file_path }}"
     dest: /tmp
   when: tomcatExists.stat.exists == False
 
@@ -15,6 +37,7 @@
     remote_src: yes
     src: /tmp/apache-tomcat-9.0.34.tar.gz
     dest: /tmp
+    mode: 0766
   when: tomcatExists.stat.exists == False
 
 - name: Rename the extracted tar
@@ -23,12 +46,12 @@
     chdir: /tmp
   when: tomcatExists.stat.exists == False
 
-- name: Set CATALINA_HOME environment variables
-  lineinfile:
-    path: /etc/environment
-    line: CATALINA_HOME="/tmp/tomcat"
-    state: present
-    insertafter: EOF
+# - name: Set CATALINA_HOME environment variables
+#   lineinfile:
+#     path: /etc/environment
+#     line: CATALINA_HOME="/tmp/tomcat"
+#     state: present
+#     insertafter: EOF
 
 - name: Update bash profile
   shell: . /etc/environment
@@ -37,3 +60,24 @@
   template:
      src: tomcat-users.xml.j2  
      dest: /tmp/tomcat/conf/tomcat-users.xml
+
+- name: Change ownership
+  file:
+    path: /tmp/tomcat
+    owner: tomcat
+    group: tomcat
+    mode: 0766
+    recurse: yes
+    state: directory
+
+- name: Copy Tomcat service to remote
+  template:
+     src: tomcat.service 
+     dest: /etc/systemd/system/
+
+- name: Start and enable Tomcat service
+  systemd:
+    name: tomcat
+    state: started
+    enabled: true
+    daemon_reload: true
