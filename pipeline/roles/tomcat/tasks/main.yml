@@ -1,10 +1,4 @@
 ---
-- name: Update and upgrade apt packages
-  apt:
-    upgrade: yes
-    update_cache: yes
-    cache_valid_time: 86400
-
 - name: install JDK 11
   apt:
     name: openjdk-11-jdk
@@ -45,13 +39,6 @@
   args:
     chdir: /tmp
   when: tomcatExists.stat.exists == False
-
-# - name: Set CATALINA_HOME environment variables
-#   lineinfile:
-#     path: /etc/environment
-#     line: CATALINA_HOME="/tmp/tomcat"
-#     state: present
-#     insertafter: EOF
 
 - name: Update bash profile
   shell: . /etc/environment

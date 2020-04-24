@@ -1,3 +1,3 @@
-itrust_war_file_path: /var/lib/jenkins/workspace/iTrust2/target/iTrust2.war
+itrust_war_file_path: /var/lib/jenkins/workspace/iTrust/iTrust2/target/iTrust2.war
 src_war_path: /bakerx/pipeline/roles/deploy_iTrust/templates/iTrust2.war
-dest_war_path: /tmp/tomcat/webapps/iTrust.war
+dest_war_path: /tmp/tomcat/webapps/iTrust2.war

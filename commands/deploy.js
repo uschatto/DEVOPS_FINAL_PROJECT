@@ -27,22 +27,38 @@ exports.builder = yargs => {
             describe: 'Provide the path to the main inventory.ini',
             default: 'pipeline/inventory.ini',
             type: 'string'
+        },
+        vaultpass: {
+            alias: 'vp',
+            describe: 'the password to use for ansible vault',
+            default: 'DEVOPS16',
+            type: 'string'
         }
     });
 };
 
 exports.handler = async argv => {
-    const { app, itrustFile, checkboxFile, inventory } = argv;
+    const { app, itrustFile, checkboxFile, inventory, vaultpass } = argv;
     (async () => {
-        await run(app, itrustFile, checkboxFile, inventory);
+        await run(app, itrustFile, checkboxFile, inventory, vaultpass);
     })();
 };
 
-async function run(app, itrustFile, checkboxFile, inventory) {
+async function run(app, itrustFile, checkboxFile, inventory, vaultpass) {
     
     let basic_filePath = "/bakerx/pipeline/";
     let inventoryPath = basic_filePath + inventory;
     let playbook_name = "";
+
+    if(vaultpass)
+    {
+        console.log(chalk.bgCyan('Creating the vault password file on the configuration server in /tmp'));
+        result = sshSync (`"echo ${vaultpass} > /tmp/.vault_pass"`, 'vagrant@192.168.33.11');
+        result = sshSync("chmod '0600' /tmp/.vault_pass", 'vagrant@192.168.33.11');
+        if( result.error ) { console.log(result.error); process.exit( result.status ); }
+    }
+
+    let vaultPath = '/tmp/.vault_pass';
 
     if(app == "iTrust"){
         playbook_name = basic_filePath + itrustFile;
@@ -53,7 +69,7 @@ async function run(app, itrustFile, checkboxFile, inventory) {
     }
 
     console.log('Running playbook for Deployment')
-    result = sshSync(`ansible-playbook ${playbook_name} -i ${inventoryPath}`, 'vagrant@192.168.33.11');
+    result = sshSync(`ansible-playbook --vault-password-file=${vaultPath} ${playbook_name} -i ${inventoryPath}`, 'vagrant@192.168.33.11');
     if( result.error ) { process.exit( result.status ); }
 
 }

@@ -1,4 +1,22 @@
 ---
+- name: Update and upgrade apt packages
+  apt:
+    upgrade: yes
+    update_cache: yes
+    cache_valid_time: 86400
+
+- name: Install python-pip
+    become: yes
+    apt:
+      name: ['python-pip']
+      state: present
+      update_cache: yes
+      cache_valid_time: 3600
+
+- name: Install mysql
+  include_role:
+    name: mysql
+
 - name: Checking if the path to iTrust war exists
   local_action:
     module: stat
