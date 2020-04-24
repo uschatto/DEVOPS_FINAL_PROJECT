@@ -4,7 +4,7 @@ const os = require('os');
 const path = require('path')
 const got = require('got');
 const fs = require('fs');
-// var generateRSAKeypair = require('generate-rsa-keypair')
+var generateRSAKeypair = require('generate-rsa-keypair')
 const sshpk = require('sshpk');
 const sshSync = require('../lib/ssh');
 
