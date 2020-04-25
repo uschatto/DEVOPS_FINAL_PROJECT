@@ -12,6 +12,7 @@
     - env
     - java
     - jenkins
+    - node
     - packages
     - mongodb
     - mysql

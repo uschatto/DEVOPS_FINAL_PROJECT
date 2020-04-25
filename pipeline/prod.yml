@@ -6,16 +6,19 @@
 - hosts: monitor
   roles:
     - cp_dash
+    - node
     - redis_node
 
 - hosts: checkbox
   roles:
     - cp_agent
+    - node
     - redis_node
 
 - hosts: itrust
   roles:
     - cp_agent
+    - node
     - redis_node
 
 
