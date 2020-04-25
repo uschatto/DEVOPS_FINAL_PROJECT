@@ -33,7 +33,7 @@ async function main(name)
 {
     let agent = new Agent();
 
-    let connection = redis.createClient(6379, "{{ hostvars['monitor']['ansible_host'] }}", {})
+    let connection = redis.createClient(6379, "{{ groups['monitor'][0] }}", {})
     connection.on('error', function(e)
     {
         console.log(e);

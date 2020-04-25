@@ -1,7 +1,10 @@
 ---
-- hosts: "monitor,checkbox,itrust"
-  gather_facts: true
-  tasks: []
+#- hosts: monitor:checkbox:itrust
+#  gather_facts: true
+#  tasks: []
+#  tasks:
+#    - debug:
+#        msg: "{{ groups['monitor'][0] }}"
 
 - hosts: monitor
   roles:
@@ -9,17 +12,9 @@
     - node
     - redis_node
 
-- hosts: checkbox
+- hosts: checkbox:itrust
   roles:
     - cp_agent
     - node
     - redis_node
 
-- hosts: itrust
-  roles:
-    - cp_agent
-    - node
-    - redis_node
-
-
-## run node bin/www
