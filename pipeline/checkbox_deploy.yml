@@ -1,0 +1,12 @@
+---
+- hosts: checkbox
+  vars_files:
+    vars_for_checkbox.yml
+  gather_facts: yes 
+  become: yes 
+  roles:
+    - ubuntu
+    - env
+    - node
+    - mongodb
+    - deploy_checkbox

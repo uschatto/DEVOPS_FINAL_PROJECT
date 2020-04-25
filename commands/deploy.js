@@ -9,7 +9,7 @@ require('dotenv').config()
 const sshSync = require('../lib/ssh');
 
 exports.command = 'deploy <app>';
-exports.desc = 'Deploy itrust';
+exports.desc = 'Deploy app';
 exports.builder = yargs => {
     yargs.options({
         itrustFile: {
@@ -62,13 +62,11 @@ async function run(app, itrustFile, checkboxFile, inventory, vaultpass) {
 
     if(app == "iTrust"){
         playbook_name = basic_filePath + itrustFile;
-        console.log(playbook_name);
     }else if(app == "checkbox.io"){
         playbook_name = basic_filePath + checkboxFile;
-        console.log(playbook_name);
     }
 
-    console.log('Running playbook for Deployment')
+    console.log(`Running playbook for deployment of ${app}`)
     result = sshSync(`ansible-playbook --vault-password-file=${vaultPath} ${playbook_name} -i ${inventoryPath}`, 'vagrant@192.168.33.11');
     if( result.error ) { process.exit( result.status ); }
 

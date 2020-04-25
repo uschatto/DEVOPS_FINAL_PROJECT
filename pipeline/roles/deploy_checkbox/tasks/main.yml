@@ -1,0 +1,20 @@
+---
+- name: Clone checkbox.io repo
+  git:
+    repo: "https://github.com/chrisparnin/checkbox.io"
+    dest: "{{ ansible_env.HOME }}/checkbox.io"
+
+- name: Install npm packages based on package.json for checkbox.io
+  npm:
+    path: "{{ ansible_env.HOME }}/checkbox.io/server-side/site/"
+    state: latest 
+
+- name: Install npm module pm2
+  npm:
+    name: pm2
+    global: yes
+
+- name: Start server 
+  shell:
+    chdir: "{{ ansible_env.HOME }}/checkbox.io/server-side/site/" 
+    cmd: pm2 start server.js
