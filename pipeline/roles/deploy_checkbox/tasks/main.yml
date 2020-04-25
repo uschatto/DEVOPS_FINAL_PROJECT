@@ -1,8 +1,13 @@
 ---
+- name: Check if repository already exists
+  stat: path="{{ ansible_env.HOME }}/checkbox.io"
+  register: repo_present
+
 - name: Clone checkbox.io repo
   git:
     repo: "https://github.com/chrisparnin/checkbox.io"
     dest: "{{ ansible_env.HOME }}/checkbox.io"
+  when: not repo_present.stat.exists
 
 - name: Install npm packages based on package.json for checkbox.io
   npm:
@@ -14,7 +19,13 @@
     name: pm2
     global: yes
 
+- name: Check if server is already up
+  shell:
+    cmd: ps -ef | grep checkbox.io | grep -v color | wc -l
+  register: running
+ 
 - name: Start server 
   shell:
     chdir: "{{ ansible_env.HOME }}/checkbox.io/server-side/site/" 
     cmd: pm2 start server.js
+  when: 'running.stdout == "0"'
