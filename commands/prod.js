@@ -52,7 +52,7 @@ class DigitalOceanProvider{
         {
           "name": name,
           "region":region,
-          "size":"512mb",
+          "size":"s-1vcpu-3gb",
           "image":image,
           "ssh_keys":key_list,
           "backups":false,
