@@ -27,7 +27,10 @@
           }
           stage('Build') {
             sh 'cd iTrust2 && sudo mvn -f pom-data.xml process-test-classes'
-            sh 'cd iTrust2 && sudo mvn clean test verify org.apache.maven.plugins:maven-checkstyle-plugin:3.1.0:checkstyle'
+            sh 'cd iTrust2 && sudo mvn clean install'
+          }
+          stage('Post Build') {
+            sh 'cd iTrust2 && scp /var/lib/jenkins/workspace/iTrust/iTrust2/target/iTrust2.war /tmp/'
           }
           stage('Tear Down Services') {
             dir ('') {
