@@ -135,6 +135,7 @@ class DigitalOceanProvider{
         for (var key in do_ids){
           if (!data_lines.includes('['+key+']'))
             {
+              console.log("Inside IF")
               data_lines.push('['+key+']')
               data_lines.push(do_ids[key][1]+"  ansible_ssh_private_key_file=/bakerx/pipeline/devops  ansible_user=root")
               data_lines.push('['+key+':vars]')
@@ -143,6 +144,7 @@ class DigitalOceanProvider{
             }
           else
             {
+              console.log("Inside Else")
               let index = data_lines.indexOf('['+key+']')
               config_lines = {
                 1:  do_ids[key][1]+"  ansible_ssh_private_key_file=/bakerx/pipeline/devops  ansible_user=root",

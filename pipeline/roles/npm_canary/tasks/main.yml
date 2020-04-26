@@ -1,0 +1,20 @@
+---
+- name: npm install
+  become: yes
+  npm:
+    path: "{{ ansible_env.HOME }}/checkbox.io-micro-preview/"
+    
+- name: Install forever globally
+  become: yes
+  npm:
+    name: forever
+    global: yes
+    state: present
+
+- name: Run the code on master and broken
+  command: "{{ item }}"
+  with_items:
+    - forever stopall
+    - forever start index.js
+  args:
+    chdir: "{{ansible_env.HOME}}/checkbox.io-micro-preview/"

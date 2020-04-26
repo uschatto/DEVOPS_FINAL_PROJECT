@@ -1,0 +1,14 @@
+---
+- name: Clone checkbox.io repo on master
+  git:
+    repo: 'https://github.com/chrisparnin/checkbox.io-micro-preview.git'
+    dest: "{{ ansible_env.HOME }}/checkbox.io-micro-preview"
+    version: "{{ branch1 }}"
+  when: group_names[0] == 'master'
+  
+- name: Clone checkbox.io repo on broken
+  git:
+    repo: 'https://github.com/chrisparnin/checkbox.io-micro-preview.git'
+    dest: "{{ ansible_env.HOME }}/checkbox.io-micro-preview"
+    version: "{{ branch2 }}"
+  when: group_names[0] == 'broken'

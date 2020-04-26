@@ -7,7 +7,7 @@ const fs = require('fs');
 const scpSync = require('../lib/scp');
 const sshSync = require('../lib/ssh');
 
-exports.command = 'canary <vm1> <vm2>';
+exports.command = 'canary <branch1> <branch2>';
 exports.desc = 'Provision and configure the configuration server';
 exports.builder = yargs => {
     yargs.options({
@@ -20,23 +20,17 @@ exports.builder = yargs => {
             describe: 'Provide the path to the inventory file',
             type: 'string',
             default: 'pipeline/inventory.ini'
-        },
-        vaultpass: {
-            alias: 'vp',
-            describe: 'the password to use for ansible vault',
-            default: 'DEVOPS16',
-            type: 'string'
-        },
+        }
     });
 };
 
 
 exports.handler = async argv => {
-    const { file,inventory, vaultpass, vm1, vm2 } = argv;
+    const { file,inventory, branch1, branch2 } = argv;
     (async () => {
         if (fs.existsSync(path.resolve(file)) && fs.existsSync(path.resolve(inventory)))
         { 
-        await create_vm( file, inventory, vaultpass );
+        await create_vm( file, inventory, branch1, branch2 );
         }
         else
         {
@@ -46,7 +40,7 @@ exports.handler = async argv => {
 
 };
 
-async function create_vm(file, inventory, vaultpass) {
+async function create_vm(file, inventory, branch1, branch2) {
 
     console.log(chalk.greenBright('Installing proxy server!'));
 
@@ -65,18 +59,8 @@ async function create_vm(file, inventory, vaultpass) {
     let filePath = '/bakerx/'+ file;
     let inventoryPath = '/bakerx/' +inventory;
 
-    if(vaultpass)
-    {
-        console.log(chalk.bgCyan('Creating the vault password file on the configuration server in /tmp'));
-        result = sshSync (`"echo ${vaultpass} > /tmp/.vault_pass"`, 'vagrant@192.168.33.11');
-        result = sshSync("chmod '0600' /tmp/.vault_pass", 'vagrant@192.168.33.11');
-        if( result.error ) { console.log(result.error); process.exit( result.status ); }
-    }
-
-    let vaultPath = '/tmp/.vault_pass';
-
     console.log(chalk.cyanBright('Running ansible playbook for master and broken vms'))
-    result = sshSync(`ansible-playbook ${filePath} -i ${inventoryPath} --vault-password-file=${vaultPath}`, 'vagrant@192.168.33.11');
+    result = sshSync(`ansible-playbook ${filePath} -i ${inventoryPath} -e "branch1=${branch1}" -e "branch2=${branch2}"`, 'vagrant@192.168.33.11');
     if( result.error ) { process.exit( result.status ); }
 }
 
