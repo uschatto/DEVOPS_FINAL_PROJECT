@@ -47,18 +47,14 @@
     path: "{{ ansible_env.HOME }}/checkbox.io/server-side/site/"
     state: latest 
 
-- name: Install npm module pm2
-  npm:
-    name: pm2
-    global: yes
-
-- name: Check if server is already up
+- name: check if the server is already running
   shell: "ps -aef | grep checkbox.io | grep -v color | grep -v grep | wc -l"
   register: running
 
-- name: Start server 
-  become: yes
-  command: pm2 start server.js 
-  args: 
-    chdir: "{{ ansible_env.HOME }}/checkbox.io/server-side/site/" 
+- name: Start server if not running already
+  shell: forever start server.js 
+  args:
+    chdir: "{{ ansible_env.HOME }}/checkbox.io/server-side/site/"  
+  environment:
+    APP_PORT: 3002
   when: 'running.stdout == "0"'
