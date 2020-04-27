@@ -9,6 +9,39 @@
     dest: "{{ ansible_env.HOME }}/checkbox.io"
   when: not repo_present.stat.exists
 
+- name: Remove the default file from nginx folder
+  file:
+    path: /etc/nginx/sites-available/default
+    state: absent
+
+- name: Copy the local-conf/default file over to /etc/nginx/sites-available folder
+  template:
+    src: default.js.j2
+    dest: /etc/nginx/sites-available/default
+    owner: root
+    group: root
+    mode: 0644
+
+- name: Copy nginx.conf file over to /etc/nginx folder
+  copy:
+    src: "{{ ansible_env.HOME }}/checkbox.io/local-conf/nginx.conf"
+    dest: /etc/nginx/nginx.conf
+    owner: root
+    group: root
+    mode: 0644
+    remote_src: yes
+
+- name: Copy all html files over for nginx to refer to
+  copy:
+    src: "{{ ansible_env.HOME }}/checkbox.io/public_html/"
+    dest: /usr/share/nginx/html
+    remote_src: yes
+
+- name: Start nginx service
+  service:
+    name: nginx
+    state: restarted
+
 - name: Install npm packages based on package.json for checkbox.io
   npm:
     path: "{{ ansible_env.HOME }}/checkbox.io/server-side/site/"
@@ -20,12 +53,12 @@
     global: yes
 
 - name: Check if server is already up
-  shell:
-    cmd: ps -ef | grep checkbox.io | grep -v color | wc -l
+  shell: "ps -aef | grep checkbox.io | grep -v color | grep -v grep | wc -l"
   register: running
- 
+
 - name: Start server 
-  shell:
+  become: yes
+  command: pm2 start server.js 
+  args: 
     chdir: "{{ ansible_env.HOME }}/checkbox.io/server-side/site/" 
-    cmd: pm2 start server.js
   when: 'running.stdout == "0"'
