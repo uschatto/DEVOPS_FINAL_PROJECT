@@ -42,8 +42,6 @@ exports.builder = yargs => {
 exports.handler = async argv => {
     const { app, itrustFile, checkboxFile, inventory, vaultpass } = argv;
     (async () => {
-        // await createWar();
-        await preDeploy();
         await run(app, itrustFile, checkboxFile, inventory, vaultpass);
     })();
 };
@@ -66,14 +64,17 @@ async function run(app, itrustFile, checkboxFile, inventory, vaultpass) {
 
     if(app == "iTrust"){
         playbook_name = basic_filePath + itrustFile;
+        await triggerBuildAndCreateWar(app,vaultPath,playbook_name, inventoryPath);
     }else if(app == "checkbox.io"){
         playbook_name = basic_filePath + checkboxFile;
+        deployApps(app,vaultPath,playbook_name, inventoryPath)
     }
+}
 
+ function deployApps(app,vaultPath,playbook_name, inventoryPath){
     console.log(`Running playbook for deployment of ${app}`)
     result = sshSync(`ansible-playbook --vault-password-file=${vaultPath} ${playbook_name} -i ${inventoryPath}`, 'vagrant@192.168.33.11');
     if( result.error ) { process.exit( result.status ); }
-
 }
 
 async function waitOnQueue(id) {
@@ -106,9 +107,8 @@ async function triggerBuild(job) {
     return buildId;
 }
 
-async function preDeploy(){
+async function triggerBuildAndCreateWar(app,vaultPath,playbook_name, inventoryPath){
     let buildId = await triggerBuild(process.env.JENKINS_JOB_ITRUST).catch( e => console.log(e));
-    
     console.log(chalk.blueBright(`Build number :  ${buildId}`));
 
     console.log(chalk.green(`Build output`));
@@ -125,17 +125,12 @@ async function preDeploy(){
     log.on('end', function() {
       console.log('end');
       copyWarFile();
+      deployApps(app,vaultPath,playbook_name, inventoryPath);
     });
 }
 
 function copyWarFile() {
     result = sshSync(`scp -i ~/.ssh/mm_rsa vagrant@192.168.33.20:${process.env.JENKINS_WAR_PATH} ${process.env.ITRUST_WAR_PATH}`,'vagrant@192.168.33.11');       
-    if( result.error ) { process.exit( result.status ); }
-    else{ console.log(chalk.green(("Successfully copied iTrust war file"))); }
+    if( result.error ) { process.exit( result.status ); return 0; }
+    else{ console.log(chalk.green(("Successfully copied iTrust war file"))); return 1; }
 }
-
-// async function createWar(){
-//     result = sshSync(`cd /var/lib/jenkins/workspace/iTrust/iTrust2 && mvn package`,'vagrant@192.168.33.20');     
-//     if( result.error ) { process.exit( result.status ); }
-//     else{ console.log(chalk.green(("Successfully copied iTrust war file"))); }
-// }
