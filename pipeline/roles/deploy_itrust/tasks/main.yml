@@ -17,6 +17,17 @@
   include_role:
     name: mysql
 
+- name: Copy the sql dump file to iTrust machine
+  template:
+    src: dump.sql 
+    dest: ~/dump.sql
+
+- name: Import the dump file to create iTrust2 database for login purpose
+  mysql_db:
+    name: iTrust2 
+    state: import    
+    target: ~/dump.sql 
+
 - name: Checking if the path to iTrust war exists
   local_action:
     module: stat

@@ -27,7 +27,7 @@ exports.builder = yargs => {
         inventory: {
             alias: 'i',
             describe: 'Provide the path to the main inventory.ini',
-            default: 'pipeline/inventory.ini',
+            default: 'inventory.ini',
             type: 'string'
         },
         vaultpass: {
@@ -48,8 +48,8 @@ exports.handler = async argv => {
 
 async function run(app, itrustFile, checkboxFile, inventory, vaultpass) {
     
-    let basic_filePath = "/bakerx/pipeline/";
-    let inventoryPath = basic_filePath + inventory;
+    let basePath = "/bakerx/pipeline/";
+    let inventoryPath = basePath + inventory;
     let playbook_name = "";
 
     if(vaultpass)
@@ -63,10 +63,10 @@ async function run(app, itrustFile, checkboxFile, inventory, vaultpass) {
     let vaultPath = '/tmp/.vault_pass';
 
     if(app == "iTrust"){
-        playbook_name = basic_filePath + itrustFile;
+        playbook_name = basePath + itrustFile;
         await triggerBuildAndCreateWarAndDeploy(app,vaultPath,playbook_name, inventoryPath);
     }else if(app == "checkbox.io"){
-        playbook_name = basic_filePath + checkboxFile;
+        playbook_name = basePath + checkboxFile;
         deployApps(app,vaultPath,playbook_name, inventoryPath)
     }
 }
@@ -119,14 +119,21 @@ async function triggerBuildAndCreateWarAndDeploy(app,vaultPath,playbook_name, in
     log.on('end', function() {
       console.log('end');
       copyWarFile();
+      copySqlDumpFile();
       deployApps(app,vaultPath,playbook_name, inventoryPath);
     });
 }
 
 function copyWarFile() {
-    result = sshSync(`scp -i ~/.ssh/mm_rsa vagrant@192.168.33.20:${process.env.JENKINS_WAR_PATH} ${process.env.ITRUST_WAR_PATH}`,'vagrant@192.168.33.11');       
-    if( result.error ) { process.exit( result.status ); return 0; }
-    else{ console.log(chalk.green(("Successfully copied iTrust war file"))); return 1; }
+    result = sshSync(`scp -i ~/.ssh/mm_rsa vagrant@192.168.33.20:${process.env.JENKINS_WAR_PATH} ${process.env.ITRUST_TEMPLATES_PATH}`,'vagrant@192.168.33.11');       
+    if( result.error ) { process.exit( result.status ); }
+    else{ console.log(chalk.green(("Successfully copied iTrust war file"))); }
+}
+
+function copySqlDumpFile() {
+    result = sshSync(`scp -i ~/.ssh/mm_rsa vagrant@192.168.33.20:${process.env.JENKINS_SQL_DUMP_PATH} ${process.env.ITRUST_TEMPLATES_PATH}`,'vagrant@192.168.33.11'); 
+    if( result.error ) { process.exit( result.status ); } 
+    else{ console.log(chalk.green(("Successfully copied iTrust sql dump file"))); }
 }
 
 function deployApps(app,vaultPath,playbook_name, inventoryPath){

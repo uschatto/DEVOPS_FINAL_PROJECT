@@ -1,2 +1,2 @@
-src_war_path: /bakerx/pipeline/roles/deploy_iTrust/templates/iTrust2.war
+src_war_path: /bakerx/pipeline/roles/deploy_itrust/templates/iTrust2.war
 dest_war_path: /tmp/tomcat/webapps/iTrust2.war
