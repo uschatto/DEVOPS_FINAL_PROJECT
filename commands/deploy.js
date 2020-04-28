@@ -125,13 +125,13 @@ async function triggerBuildAndCreateWarAndDeploy(app,vaultPath,playbook_name, in
 }
 
 function copyWarFile() {
-    result = sshSync(`scp -i ~/.ssh/mm_rsa vagrant@192.168.33.20:${process.env.JENKINS_WAR_PATH} ${process.env.ITRUST_TEMPLATES_PATH}`,'vagrant@192.168.33.11');       
+    result = sshSync(`'scp -i ~/.ssh/mm_rsa vagrant@192.168.33.20:${process.env.JENKINS_WAR_PATH} ${process.env.ITRUST_TEMPLATES_PATH}'`,'vagrant@192.168.33.11');       
     if( result.error ) { process.exit( result.status ); }
     else{ console.log(chalk.green(("Successfully copied iTrust war file"))); }
 }
 
 function copySqlDumpFile() {
-    result = sshSync(`scp -i ~/.ssh/mm_rsa vagrant@192.168.33.20:${process.env.JENKINS_SQL_DUMP_PATH} ${process.env.ITRUST_TEMPLATES_PATH}`,'vagrant@192.168.33.11'); 
+    result = sshSync(`'scp -i ~/.ssh/mm_rsa vagrant@192.168.33.20:${process.env.JENKINS_SQL_DUMP_PATH} ${process.env.ITRUST_TEMPLATES_PATH}'`,'vagrant@192.168.33.11'); 
     if( result.error ) { process.exit( result.status ); } 
     else{ console.log(chalk.green(("Successfully copied iTrust sql dump file"))); }
 }
