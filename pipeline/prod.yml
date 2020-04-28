@@ -10,11 +10,12 @@
   roles:
     - cp_dash
     - node
-    - redis_node
+    - redis
+    - npm_forever
 
 - hosts: checkbox:itrust
   roles:
     - cp_agent
     - node
-    - redis_node
+    - npm_forever
 

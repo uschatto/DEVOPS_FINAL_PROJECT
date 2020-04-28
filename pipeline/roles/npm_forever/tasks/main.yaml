@@ -1,12 +1,4 @@
 ---
-- name: Install redis
-  apt:
-    name: redis-server
-    state: latest
-    update_cache: yes
-  become: yes
-  when: ansible_hostname == 'monitor'
-
 ## Run npm install
 - name: Run npm install on monitor
   become: yes
@@ -37,14 +29,6 @@
     -  forever stopall
     -  "forever start agent/index.js {{ ansible_hostname }}"
     -  forever start agent/server.js
-
-## Edit redis.conf
-- name: Change redis ip
-  lineinfile:
-    path: /etc/redis/redis.conf
-    regexp: '^bind 127.0.0.1 ::1'
-    line: 'bind 0.0.0.0'
-  when: ansible_hostname == 'monitor'
 
 - name: Restart redis
   systemd:

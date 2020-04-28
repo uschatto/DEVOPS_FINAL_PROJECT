@@ -5,3 +5,7 @@
     - clone_canary
     - node
     - npm_canary
+
+- hosts: proxy
+  roles: 
+    - redis
