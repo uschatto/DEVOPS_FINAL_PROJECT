@@ -28,7 +28,7 @@ class Production
 {
      constructor()
      {
-      this.TARGET = GREEN;
+      this.TARGET = BLUE;
       setInterval( this.b2g.bind(this), 10000)
      }
 
