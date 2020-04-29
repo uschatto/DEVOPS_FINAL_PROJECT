@@ -10,4 +10,4 @@
   roles: 
     - node
     - redis
-##- npm_canary
+    - proxy_code

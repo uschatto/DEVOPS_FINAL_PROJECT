@@ -1,0 +1,30 @@
+- name: Clone Deployment on proxy
+  git:
+    repo: https://github.com/CSC-DevOps/Deployment.git
+    dest: "{{ ansible_env.HOME }}/Deployment"
+
+- name: Change serve.js
+  copy:
+    src: serve.js
+    dest: "{{ ansible_env.HOME }}/Deployment/commands/serve.js"
+
+- name: npm install
+  become: yes
+  npm:
+    path: "{{ ansible_env.HOME }}/Deployment/"
+
+- name: Install forever globally
+  become: yes
+  npm:
+    name: forever
+    global: yes
+    state: present
+  
+- name: Run the code on proxyy
+  command: "{{ item }}"
+  with_items:
+    - forever stopall
+    - forever start index.js serve 
+  args:
+    chdir: "{{ansible_env.HOME}}/Deployment/"
+  
