@@ -3,9 +3,21 @@ const chalk = require('chalk');
 const path = require('path');
 const os = require('os');
 const fs = require('fs');
-
+const http = require('http')
 const scpSync = require('../lib/scp');
 const sshSync = require('../lib/ssh');
+
+var options = {
+    host: '192.168.44.20',
+    port: 3000,
+    path: '/preview',
+    method: 'POST',
+    headers: {
+        "Content-Type": "application/json",
+    }
+};
+
+var data = fs.readFileSync(__dirname+'/../resources/survey.json','utf-8');
 
 exports.command = 'canary <branch1> <branch2>';
 exports.desc = 'Provision and configure the configuration server';
@@ -30,7 +42,13 @@ exports.handler = async argv => {
     (async () => {
         if (fs.existsSync(path.resolve(file)) && fs.existsSync(path.resolve(inventory)))
         { 
-        await create_vm( file, inventory, branch1, branch2 );
+            await create_vm( file, inventory, branch1, branch2 );
+            // make i 600 for 10 minutes
+            for (var i = 0; i < 10; i++){
+                console.log("Iteration:", i)
+                await generate_load();
+                await sleep(2000); 
+            }
         }
         else
         {
@@ -65,3 +83,25 @@ async function create_vm(file, inventory, branch1, branch2) {
 }
 
    
+async function generate_load(){
+    var req = http.request(options, function(res) {
+        console.log('STATUS: ' + res.statusCode);
+        console.log('HEADERS: ' + JSON.stringify(res.headers));
+        res.setEncoding('utf8');
+        res.on('data', function (chunk) {
+          console.log('BODY: ' + chunk);
+        });
+      });
+      
+      req.on('error', function(e) {
+        console.log('problem with request: ' + e.message);
+      });
+      
+      // write data to request body
+      req.write(data);
+      req.end();
+}
+
+async function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}

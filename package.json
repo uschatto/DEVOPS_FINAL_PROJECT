@@ -13,6 +13,7 @@
     "dotenv": "^8.2.0",
     "generate-rsa-keypair": "^0.2.1",
     "got": "^10.7.0",
+    "http": "0.0.1-security",
     "jenkins": "^0.28.0",
     "keypair": "^1.0.1",
     "node-forge": "^0.9.1",
