@@ -90,3 +90,34 @@ Experiences:
 ## Milestone 3
 [Checkpoint 1](https://github.ncsu.edu/cscdevops-spring2020/DEVOPS-16/blob/M3/CHECKPOINT.md#checkpoint-1)
 
+[Screencast Milestone3]()
+
+Experiences:
+- There were many challenges we faced to make the iTrust application work. Inititally, we had a problem with db.properties that wasn't included in the war file. To fix this issue we understood the whole process of what maven command does to create a war file.
+- Once we had a proper war file we had challanges on deploying iTrust on tomcat. Tomcat was getting destroyed as soon as iTrust was extracted. We figured out that increasing the size of the droplet will help fixing this issue.
+
+### Task 1: Set up ansible/jenkins-server
+- Run the command ```pipeline setup --gh-user <username> --gh-pass <password>```
+
+### Task 2: Provision instances and monitoring
+- Run the command ```pipeline prod up```. This will provision three instances monitor, itrust, checkbox.
+
+<p align="center">
+<img src ="https://github.ncsu.edu/cscdevops-spring2020/DEVOPS-16/blob/M3/img/digitalocean.PNG" width="600" height="350">
+</p>
+
+### Task 3: Implement configuration steps for deployment
+- Run the command ```pipeline deploy checkbox.io -i inventory.ini```. This will deploy checkbox.io application on checkbox server.
+
+<p align="center">
+<img src ="https://github.ncsu.edu/cscdevops-spring2020/DEVOPS-16/blob/M3/img/checkbox_app.PNG" width="600" height="350">
+</p>
+
+-Run the command ```pipeline deploy iTrust -i inventory.ini```. This will first trigger a build for iTrust job and will create a iTrust2.war and then it will deploy the iTrust war file on itrust server. 
+
+<p align="center">
+<img src ="https://github.ncsu.edu/cscdevops-spring2020/DEVOPS-16/blob/M3/img/itrust_login.PNG" width="600" height="350">
+</p>
+
+### Task 4: Canary analysis
+
