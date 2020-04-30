@@ -94,10 +94,13 @@ Experiences:
 [Screencast Milestone3]()
 
 Experiences:
+- We came to know how to deploy the application on cloud instances instead of the same instance. 
 - We found it interesting to implement firewall in our project.
-- There were many challenges we faced to make the iTrust application work. Inititally, we had a problem with db.properties that wasn't included in the war file. To fix this issue we understood the whole process of what maven command does to create a war file.
-- Once we had a proper war file we had challanges on deploying iTrust on tomcat. Tomcat was getting destroyed as soon as iTrust was extracted. We figured out that increasing the size of the droplet will help fixing this issue.
 - We had some difficulty in installing and using the module generate rsa key pair.
+- There were many challenges we faced to make the iTrust application work. Inititally, we had a problem with db.properties that wasn't included in the war file. To fix this issue we understood the whole process of what maven command does to create a war file.
+- Once we had a proper war file we had challanges on deploying iTrust on tomcat. Tomcat was getting destroyed as soon as iTrust was extracted. We figured out that by increasing the size of the droplet and that helped to fix this issue.
+- Place holder for nginx and checkbox.
+- Place holder for canary.
 
 ### Task 1: Set up ansible/jenkins-server
 - Run the command ```pipeline setup --gh-user <username> --gh-pass <password>```
