@@ -42,7 +42,7 @@ exports.handler = async argv => {
     (async () => {
         if (fs.existsSync(path.resolve(file)) && fs.existsSync(path.resolve(inventory)))
         { 
-            // await create_vm( file, inventory, branch1, branch2 );
+            await create_vm( file, inventory, branch1, branch2 );
             let start = Date.now();
             let end = 0;
             const interval = setInterval(async function(){ 
