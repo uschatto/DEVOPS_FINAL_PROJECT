@@ -137,4 +137,5 @@ Experiences:
 </p>
 
 ### Task 4: Canary analysis
-
+- Run the command ```pipeline canary master broken``` for this task.
+- This command will bring up three local VMs the proxy server, green and blue instances. We clone the checkbox.io master on blue and broken on the green instance. We generate load for first 5 minutes on Blue instance and then it generates load on the Green VM for next 5 minutes. For canary to pass three of the four metrics should pass.
