@@ -18,6 +18,17 @@ class Agent
        let cpuload = load['currentload']
        return cpuload.toFixed(2) + ' %';
     }
+    async processes()
+    {
+       // let disksIO = await si.getDynamicData("*","*");
+       // let num = proc['disksIO']['tIO']
+       // console.log("All data:", await si.getDynamicData("*","*"));
+       let IO  = await si.disksIO();
+       let tIO = IO['tIO']
+       return tIO;
+      
+
+    }
 }
 
 (async () => 
@@ -47,7 +58,8 @@ async function main(name)
     {
         let payload = {
             memoryLoad: agent.memoryLoad(),
-            cpu: await agent.cpu()
+            cpu: await agent.cpu(),
+            processes: await agent.processes()
         };
         let msg = JSON.stringify(payload);
         await client.publish(name, msg);

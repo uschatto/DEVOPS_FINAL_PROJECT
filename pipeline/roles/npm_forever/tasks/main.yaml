@@ -28,7 +28,6 @@
   with_items:
     -  forever stopall
     -  "forever start agent/index.js {{ ansible_hostname }}"
-    -  forever start agent/server.js
 
 - name: Restart redis
   systemd:

@@ -56,5 +56,9 @@
   args:
     chdir: "{{ ansible_env.HOME }}/checkbox.io/server-side/site/"  
   environment:
-    APP_PORT: 3002
+    - APP_PORT: 3002
+    - MONGO_USER: "{{ mongo_user }}"
+    - MONGO_PASSWORD: "{{ mongo_password }}"
+    - MONGO_IP: localhost
+    - MONGO_PORT: 27017
   when: 'running.stdout == "0"'

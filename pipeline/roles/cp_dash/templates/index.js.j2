@@ -8,8 +8,8 @@ const path = require('path');
 /// Servers data being monitored.
 var servers = 
 [
-	{name: "checkbox",url:`http://{{ groups['checkbox'][0] }}:3000/`, status: "#cccccc",  scoreTrend : [0]},
-	{name: "itrust",url:`http://{{ groups['itrust'][0] }}:3000/`, status: "#cccccc",  scoreTrend : [0]},
+	{name: "checkbox",url:`http://{{ groups['checkbox'][0] }}/api/study/listing`, status: "#cccccc",  scoreTrend : [0]},
+	{name: "itrust",url:`http://{{ groups['itrust'][0] }}:8080/iTrust2/login`, status: "#cccccc",  scoreTrend : [0]},
 ];
 
 
@@ -64,6 +64,7 @@ function start(app)
 				let payload = JSON.parse(message);
 				server.memoryLoad = payload.memoryLoad;
 				server.cpu = payload.cpu;
+                                server.processes = payload.processes
 				updateHealth(server);
 			}
 		}
