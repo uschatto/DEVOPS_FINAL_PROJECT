@@ -9,6 +9,7 @@
 
 ## Edit redis.conf
 - name: Change redis ip
+  become: yes
   lineinfile:
     path: /etc/redis/redis.conf
     regexp: '^bind 127.0.0.1 ::1'
@@ -16,6 +17,7 @@
   when: ansible_hostname == 'monitor' or group_names[0] == 'proxy'
 
 - name: Restart redis
+  become: yes
   systemd:
     name: redis-server
     state: restarted

@@ -20,16 +20,26 @@
     chdir: "{{ansible_env.HOME}}/checkbox.io-micro-preview/"
 
 - name: Copy index.js on BLUE
-  templates:
+  template:
     src: index1.js.j2
-    dest: "{{ ansible_env.HOME }}/"
+    dest: "{{ ansible_env.HOME }}/index.js"
   when: group_names[0] == 'BLUE'
 
 - name: Copy index.js on GREEN
-  templates:
+  template:
     src: index2.js.j2
-    dest: "{{ ansible_env.HOME }}"
+    dest: "{{ ansible_env.HOME }}/index.js"
   when: group_names[0] == 'GREEN'
 
+- name: Install npm redis and system information
+  become: yes
+  npm:
+    name: "{{ item }}"
+    global: yes
+    state: present
+  with_items:
+    - redis 
+    - systeminformation
+
 - name: Run index.js
-  command: forever index.js
+  command: forever start index.js

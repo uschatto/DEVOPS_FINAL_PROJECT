@@ -18,6 +18,13 @@
   npm:
     path: "{{ ansible_env.HOME }}/Deployment/"
 
+- name: Install npm redis
+  become: yes
+  npm: 
+    name: redis
+    global: yes
+    state: present
+    
 - name: Install forever globally
   become: yes
   npm:
