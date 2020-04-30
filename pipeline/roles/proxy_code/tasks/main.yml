@@ -18,12 +18,15 @@
   npm:
     path: "{{ ansible_env.HOME }}/Deployment/"
 
-- name: Install npm redis
+- name: Install npm redis and fs 
   become: yes
   npm: 
-    name: redis
-    global: yes
+    name: "{{ item }}"
+    path: "{{ ansible_env.HOME }}/Deployment/"
     state: present
+  with_items:
+    - redis
+    - fs
     
 - name: Install forever globally
   become: yes

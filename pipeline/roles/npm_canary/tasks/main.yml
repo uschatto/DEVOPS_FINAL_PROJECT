@@ -35,7 +35,7 @@
   become: yes
   npm:
     name: "{{ item }}"
-    global: yes
+    path: "{{ ansible_env.HOME }}"
     state: present
   with_items:
     - redis 

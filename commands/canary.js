@@ -42,7 +42,7 @@ exports.handler = async argv => {
     (async () => {
         if (fs.existsSync(path.resolve(file)) && fs.existsSync(path.resolve(inventory)))
         { 
-            await create_vm( file, inventory, branch1, branch2 );
+            // await create_vm( file, inventory, branch1, branch2 );
             let start = Date.now();
             let end = 0;
             const interval = setInterval(async function(){ 
@@ -90,8 +90,8 @@ async function create_vm(file, inventory, branch1, branch2) {
    
 async function generate_load(){
     var req = http.request(options, function(res) {
-        console.log('STATUS: ' + res.statusCode);
-        console.log('HEADERS: ' + res);
+        // console.log('STATUS: ' + res.statusCode);
+        // console.log('HEADERS: ' + JSON.stringify(res.headers));
         res.setEncoding('utf8');
         res.on('data', function (chunk) {
           console.log('BODY: ' + chunk);

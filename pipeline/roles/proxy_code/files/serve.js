@@ -5,7 +5,7 @@ const redis = require('redis');
 const got = require('got');
 const http = require('http');
 const httpProxy = require('http-proxy');
-
+const fs = require('fs')
 exports.command = 'serve';
 exports.desc = 'Run traffic proxy.';
 exports.builder = yargs => {};
@@ -21,7 +21,8 @@ exports.handler = async argv => {
 
 };
 
-
+var data = fs.readFileSync('survey.json','utf-8');
+var headers = { 'Content-Type':'application/json' }
 const BLUE  = 'http://192.168.44.25:3000';
 const GREEN = 'http://192.168.44.30:3000';
 let client = redis.createClient(6379, 'localhost', {});
@@ -58,7 +59,7 @@ class Production
      constructor()
      {
       this.TARGET = BLUE;
-      setInterval( this.b2g.bind(this), 300000)
+      setInterval( this.b2g.bind(this), 10000)
      }
 
     proxy()
@@ -73,16 +74,17 @@ class Production
             proxy.web(req, res, {target: self.TARGET})
 	    for (var server of servers ){
 	        if (server.url == self.TARGET)
-		{
-		    server.status = res.statusCode;
-		    //server.latency = res.timings;
-		   
-		}
+		    {
+                      self.healthCheck(server)
+                //server.latency = res.timings;
+                res.writeHead(200, { 'Content-Type': 'text/plain' });
+                res.write(JSON.stringify(server, true, 2));
+                res.end();
+                server.status = '#cccccc';
+                //server.latency = res.timings;  
+		    }
 	    }
 	    //console.log("Server:", servers)
-            res.writeHead(200, { 'Content-Type': 'text/plain' });
-            res.write('request successfully proxied!' + '\n' + JSON.stringify(servers, true, 2));
-            res.end();
         });
         server.listen(3000);
    }
@@ -93,13 +95,13 @@ class Production
       this.TARGET = (this.TARGET==BLUE) ? GREEN:BLUE;
    }
 
-   async healthCheck()
+   async healthCheck(server)
    {
       try 
       {
-         const response = await got(this.TARGET, {throwHttpErrors: false});
-         let status = response.statusCode == 200 ? chalk.green(response.statusCode) : chalk.red(response.statusCode);
-         console.log( chalk`{grey Health check on ${this.TARGET}}: ${status}`);
+         const response = await got.post(this.TARGET+"/preview", {headers: headers, body: data, throwHttpErrors: false});
+         server.status = response.statusCode 
+
       }
       catch (error) {
          console.log(error);
