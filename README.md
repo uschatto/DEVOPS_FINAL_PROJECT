@@ -126,7 +126,7 @@ Experiences:
 
 - /api/study/listing
 <p align="center">
-<img src ="https://github.ncsu.edu/cscdevops-spring2020/DEVOPS-16/blob/M3/img/api_study_listing.png.PNG" width="600" height="350">
+<img src ="https://github.ncsu.edu/cscdevops-spring2020/DEVOPS-16/blob/M3/img/api_study_listing.png" width="600" height="200">
 </p>
 
 - Run the command ```pipeline deploy iTrust -i inventory.ini```. This will first trigger a build for iTrust job and will create a iTrust2.war. Further, it will install tomcat, mysql on the itrust node and then the iTrust war file will be copied and deployed on tomcat server in itrust droplet. 
