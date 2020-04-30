@@ -6,6 +6,7 @@ const fs = require('fs');
 const http = require('http')
 const scpSync = require('../lib/scp');
 const sshSync = require('../lib/ssh');
+var mwu = require('mann-whitney-utest');
 
 var options = {
     host: '192.168.44.20',
@@ -36,6 +37,19 @@ exports.builder = yargs => {
     });
 };
 
+let canaryMap = new Map();
+
+let healthBlue = new Map();
+healthBlue.set("statusCode",[]);
+healthBlue.set("latency",[]);
+healthBlue.set("cpu",[]);
+healthBlue.set("memory",[]);
+
+let healthGreen = new Map();
+healthGreen.set("statusCode",[]);
+healthGreen.set("latency",[]);
+healthGreen.set("cpu",[]);
+healthGreen.set("memory",[]);
 
 exports.handler = async argv => {
     const { file,inventory, branch1, branch2 } = argv;
@@ -45,13 +59,95 @@ exports.handler = async argv => {
             await create_vm( file, inventory, branch1, branch2 );
             let start = Date.now();
             let end = 0;
+            canaryMap.set("BLUE",healthBlue);
+            canaryMap.set("GREEN",healthGreen);
+            console.log("Generating load on BLUE vm for 5 minutes and GREEN vm for 5 minutes"); 
             const interval = setInterval(async function(){ 
                 await generate_load();
                 end = Date.now();
                 if(end - start >= 600000)
                 {
                      clearInterval(interval);
-                     console.log("End of 10 minutes");
+                     console.log("End of load generation");
+                     console.log("*****************************************************************************************************");
+                     console.log("Computing Canary Score based on StatusCode, CPU, Memory and Latency metrics using Mann Whitney U Test");
+                     var canaryScore = []
+                     var counterPass = 0;
+
+                     var samplesStatusCode = []
+                     samplesStatusCode.push((canaryMap.get("BLUE")).get("statusCode"));
+                     samplesStatusCode.push((canaryMap.get("GREEN")).get("statusCode"));
+                     var usc = mwu.test(samplesStatusCode);
+                     if (mwu.significant(usc, samplesStatusCode)) 
+                     {
+                           console.log('Status Code : The difference between data is significant!');
+                           canaryScore.push("FAIL");
+                     }	 
+                     else 
+                     {
+                           console.log('Status Code : The difference between data is not significant!');
+                           canaryScore.push("PASS");
+                           counterPass++;
+                     }
+
+                     var samplesLatency = []
+                     samplesLatency.push((canaryMap.get("BLUE")).get("latency"));
+                     samplesLatency.push((canaryMap.get("GREEN")).get("latency"));
+                     var ul = mwu.test(samplesLatency);
+                     if (mwu.significant(ul, samplesLatency)) 
+                     {
+                           console.log('Latency : The difference between data is significant!');
+                           canaryScore.push("FAIL");
+                     }	 
+                     else 
+                     {
+                           console.log('Latency : The difference between data is not significant!');
+                           canaryScore.push("PASS");
+                           counterPass++;
+                     }
+
+                     var samplesCPU = [] 
+                     samplesCPU.push((canaryMap.get("BLUE")).get("cpu"));
+                     samplesCPU.push((canaryMap.get("GREEN")).get("cpu"));
+                     var uc = mwu.test(samplesCPU);
+                     if (mwu.significant(uc, samplesCPU))
+                     {
+                           console.log('CPU : The difference between data is significant!');
+                           canaryScore.push("FAIL");
+                     }
+                     else 
+                     {
+                           console.log('CPU : The difference between data is not significant!');
+                           canaryScore.push("PASS");   
+                           counterPass++; 
+                     }
+
+                     var samplesMemory = [] 
+                     samplesMemory.push((canaryMap.get("BLUE")).get("memory"));
+                     samplesMemory.push((canaryMap.get("GREEN")).get("memory"));
+                     var um = mwu.test(samplesMemory);
+                     if (mwu.significant(um, samplesMemory))
+                     {
+                           console.log('Current Memory : The difference between data is significant!');
+                           canaryScore.push("FAIL");
+                     }
+                     else 
+                     {
+                           console.log('Current Memory : The difference between data is not significant!');
+                           canaryScore.push("PASS");   
+                           counterPass++; 
+                     }
+                     var pass = (counterPass/canaryScore.length);
+                     console.log("Canary Score : " + (pass)*100 + "%");
+                     if (pass >= 0.7)
+                     {
+                          console.log(chalk.greenBright('canary passed!')); 
+                     }
+                     else
+                     {
+                           console.log(chalk.red('canary failed'));
+                     }
+                     
                 }
             }, 1000);
         }
@@ -89,12 +185,26 @@ async function create_vm(file, inventory, branch1, branch2) {
 
    
 async function generate_load(){
+    let start = Date.now();
+    let end = 0;
     var req = http.request(options, function(res) {
-        // console.log('STATUS: ' + res.statusCode);
-        // console.log('HEADERS: ' + JSON.stringify(res.headers));
         res.setEncoding('utf8');
         res.on('data', function (chunk) {
-          console.log('BODY: ' + chunk);
+          end = Date.now();
+          if("BLUE" == JSON.parse(chunk)['name'] && JSON.parse(chunk)['status'] != "#cccccc")
+          {
+                (canaryMap.get("BLUE")).get("statusCode").push(JSON.parse(chunk)['status']);
+                (canaryMap.get("BLUE")).get("cpu").push(JSON.parse(chunk)['cpu']);
+                (canaryMap.get("BLUE")).get("memory").push(JSON.parse(chunk)['memoryLoad']);
+                (canaryMap.get("BLUE")).get("latency").push(end-start);
+          }
+          if("GREEN" == JSON.parse(chunk)['name'] && JSON.parse(chunk)['status'] != "#cccccc")
+          {
+                (canaryMap.get("GREEN")).get("statusCode").push(JSON.parse(chunk)['status']);
+                (canaryMap.get("GREEN")).get("cpu").push(JSON.parse(chunk)['cpu']);
+                (canaryMap.get("GREEN")).get("memory").push(JSON.parse(chunk)['memoryLoad']);
+                (canaryMap.get("GREEN")).get("latency").push(end-start);
+          }
         });
       });
       
