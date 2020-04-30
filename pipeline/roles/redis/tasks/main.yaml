@@ -5,7 +5,7 @@
     state: latest
     update_cache: yes
   become: yes
-  when: ansible_hostname == 'monitor' or ansible_hostname == 'proxy'
+  when: ansible_hostname == 'monitor' or group_names[0] == 'proxy'
 
 ## Edit redis.conf
 - name: Change redis ip
@@ -13,10 +13,10 @@
     path: /etc/redis/redis.conf
     regexp: '^bind 127.0.0.1 ::1'
     line: 'bind 0.0.0.0'
-  when: ansible_hostname == 'monitor' or ansible_hostname == 'proxy'
+  when: ansible_hostname == 'monitor' or group_names[0] == 'proxy'
 
 - name: Restart redis
   systemd:
     name: redis-server
     state: restarted
-  when: ansible_hostname == 'monitor' or ansible_hostname == 'proxy'
+  when: ansible_hostname == 'monitor' or group_names[0] == 'proxy'

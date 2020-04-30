@@ -91,7 +91,7 @@ async function create_vm(file, inventory, branch1, branch2) {
 async function generate_load(){
     var req = http.request(options, function(res) {
         console.log('STATUS: ' + res.statusCode);
-        console.log('HEADERS: ' + JSON.stringify(res.headers));
+        console.log('HEADERS: ' + res);
         res.setEncoding('utf8');
         res.on('data', function (chunk) {
           console.log('BODY: ' + chunk);

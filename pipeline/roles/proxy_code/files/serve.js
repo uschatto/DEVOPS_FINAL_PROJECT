@@ -1,7 +1,7 @@
 const chalk = require('chalk');
 const path = require('path');
 const os = require('os');
-
+const redis = require('redis');
 const got = require('got');
 const http = require('http');
 const httpProxy = require('http-proxy');
@@ -21,9 +21,38 @@ exports.handler = async argv => {
 
 };
 
+
 const BLUE  = 'http://192.168.44.25:3000';
 const GREEN = 'http://192.168.44.30:3000';
+let client = redis.createClient(6379, 'localhost', {});
+var servers =
+[
+    {name: "BLUE", url: BLUE, status: "#cccccc",},
+    {name: "GREEN", url: GREEN, status: "#cccccc"}
+];
 
+for( var server of servers )
+{
+    // The name of the server is the name of the channel to recent published events on redis.
+    client.subscribe(server.url);
+}
+
+client.on("message", function (channel, message)
+{
+     console.log(`Received message from agent: ${channel}`)
+     for( var server of servers )
+     {
+          // Update our current snapshot for a server's metrics.
+          if( server.url == channel)
+          {
+             let payload = JSON.parse(message);
+              server.memoryLoad = payload.memoryLoad;
+              server.cpu = payload.cpu;
+              server.uptime = payload.uptime;
+          }
+	  // console.log("Server:", server.name, "server:", server);
+      }
+});
 class Production
 {
      constructor()
@@ -42,6 +71,18 @@ class Production
         {
         console.log("TARGET:", self.TARGET)
             proxy.web(req, res, {target: self.TARGET})
+	    for (var server of servers ){
+	        if (server.url == self.TARGET)
+		{
+		    server.status = res.statusCode;
+		    //server.latency = res.timings;
+		   
+		}
+	    }
+	    //console.log("Server:", servers)
+            res.writeHead(200, { 'Content-Type': 'text/plain' });
+            res.write('request successfully proxied!' + '\n' + JSON.stringify(servers, true, 2));
+            res.end();
         });
         server.listen(3000);
    }

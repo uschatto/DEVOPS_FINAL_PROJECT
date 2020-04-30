@@ -18,3 +18,18 @@
     - forever start index.js
   args:
     chdir: "{{ansible_env.HOME}}/checkbox.io-micro-preview/"
+
+- name: Copy index.js on BLUE
+  templates:
+    src: index1.js.j2
+    dest: "{{ ansible_env.HOME }}/"
+  when: group_names[0] == 'BLUE'
+
+- name: Copy index.js on GREEN
+  templates:
+    src: index2.js.j2
+    dest: "{{ ansible_env.HOME }}"
+  when: group_names[0] == 'GREEN'
+
+- name: Run index.js
+  command: forever index.js
