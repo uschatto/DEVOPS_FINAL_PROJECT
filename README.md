@@ -87,14 +87,17 @@ Experiences:
 </p>
 
 
+
 ## Milestone 3
 [Checkpoint 1](https://github.ncsu.edu/cscdevops-spring2020/DEVOPS-16/blob/M3/CHECKPOINT.md#checkpoint-1)
 
 [Screencast Milestone3]()
 
 Experiences:
+- We found it interesting to implement firewall in our project.
 - There were many challenges we faced to make the iTrust application work. Inititally, we had a problem with db.properties that wasn't included in the war file. To fix this issue we understood the whole process of what maven command does to create a war file.
 - Once we had a proper war file we had challanges on deploying iTrust on tomcat. Tomcat was getting destroyed as soon as iTrust was extracted. We figured out that increasing the size of the droplet will help fixing this issue.
+- We had some difficulty in installing and using the module generate rsa key pair.
 
 ### Task 1: Set up ansible/jenkins-server
 - Run the command ```pipeline setup --gh-user <username> --gh-pass <password>```
@@ -113,7 +116,7 @@ Experiences:
 <img src ="https://github.ncsu.edu/cscdevops-spring2020/DEVOPS-16/blob/M3/img/checkbox_app.PNG" width="600" height="350">
 </p>
 
--Run the command ```pipeline deploy iTrust -i inventory.ini```. This will first trigger a build for iTrust job and will create a iTrust2.war and then it will deploy the iTrust war file on itrust server. 
+- Run the command ```pipeline deploy iTrust -i inventory.ini```. This will first trigger a build for iTrust job and will create a iTrust2.war. Further, it will install tomcat, mysql on the itrust node and then the iTrust war file will be copied and deployed on tomcat server in itrust droplet. 
 
 <p align="center">
 <img src ="https://github.ncsu.edu/cscdevops-spring2020/DEVOPS-16/blob/M3/img/itrust_login.PNG" width="600" height="350">
