@@ -1,7 +1,12 @@
+- name: Check if repo already exists
+  stat: path="{{ ansible_env.HOME }}/Deployment"
+  register: repo_present
+
 - name: Clone Deployment on proxy
   git:
     repo: https://github.com/CSC-DevOps/Deployment.git
     dest: "{{ ansible_env.HOME }}/Deployment"
+  when: not repo_present.stat.exists
 
 - name: Change serve.js
   copy:

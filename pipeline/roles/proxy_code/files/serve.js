@@ -29,7 +29,7 @@ class Production
      constructor()
      {
       this.TARGET = BLUE;
-      setInterval( this.b2g.bind(this), 10000)
+      setInterval( this.b2g.bind(this), 300000)
      }
 
     proxy()

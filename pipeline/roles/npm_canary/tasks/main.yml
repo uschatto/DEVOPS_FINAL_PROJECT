@@ -11,7 +11,7 @@
     global: yes
     state: present
 
-- name: Run the code on master and broken
+- name: Run the code on BLUE and GREEN 
   command: "{{ item }}"
   with_items:
     - forever stopall

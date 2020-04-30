@@ -43,12 +43,17 @@ exports.handler = async argv => {
         if (fs.existsSync(path.resolve(file)) && fs.existsSync(path.resolve(inventory)))
         { 
             await create_vm( file, inventory, branch1, branch2 );
-            // make i 600 for 10 minutes
-            for (var i = 0; i < 10; i++){
-                console.log("Iteration:", i)
+            let start = Date.now();
+            let end = 0;
+            const interval = setInterval(async function(){ 
                 await generate_load();
-                await sleep(2000); 
-            }
+                end = Date.now();
+                if(end - start >= 600000)
+                {
+                     clearInterval(interval);
+                     console.log("End of 10 minutes");
+                }
+            }, 1000);
         }
         else
         {
@@ -66,18 +71,18 @@ async function create_vm(file, inventory, branch1, branch2) {
     let result = child.spawnSync(`bakerx`, `run proxy bionic --ip 192.168.44.20`.split(' '), {shell:true, stdio: 'inherit'} );
     if( result.error ) { console.log(result.error); process.exit( result.status ); }
 
-    console.log(chalk.blueBright('Provisioning master server...'));
-    result = child.spawnSync(`bakerx`, `run master bionic --ip 192.168.44.25`.split(' '), {shell:true, stdio: 'inherit'} );
+    console.log(chalk.blueBright('Provisioning BLUE server...'));
+    result = child.spawnSync(`bakerx`, `run BLUE bionic --ip 192.168.44.25`.split(' '), {shell:true, stdio: 'inherit'} );
     if( result.error ) { console.log(result.error); process.exit( result.status ); }
 
-    console.log(chalk.blueBright('Provisioning broken server...'));
-    result = child.spawnSync(`bakerx`, `run broken bionic --ip 192.168.44.30 `.split(' '), {shell:true, stdio: 'inherit'} );
+    console.log(chalk.blueBright('Provisioning GREEN server...'));
+    result = child.spawnSync(`bakerx`, `run GREEN bionic --ip 192.168.44.30 `.split(' '), {shell:true, stdio: 'inherit'} );
     if( result.error ) { console.log(result.error); process.exit( result.status ); }
 
     let filePath = '/bakerx/'+ file;
     let inventoryPath = '/bakerx/' +inventory;
 
-    console.log(chalk.cyanBright('Running ansible playbook for master and broken vms'))
+    console.log(chalk.cyanBright(`Setting ${branch1} on BLUE vm and ${branch2} on GREEN vm`));
     result = sshSync(`ansible-playbook ${filePath} -i ${inventoryPath} -e "branch1=${branch1}" -e "branch2=${branch2}"`, 'vagrant@192.168.33.11');
     if( result.error ) { process.exit( result.status ); }
 }
