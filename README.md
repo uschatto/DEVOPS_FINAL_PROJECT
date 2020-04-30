@@ -92,10 +92,11 @@ Experiences:
 [Checkpoint 1](https://github.ncsu.edu/cscdevops-spring2020/DEVOPS-16/blob/M3/CHECKPOINT.md#checkpoint-1)
 
 [Screencast Milestone3]()
+## NOTE: Inventory being used for all the commands is the same which is in the folder /bakerx/pipeline. Name: inventory.ini.
 
 Experiences:
 - Learnt how to deploy applications on cloud and mock a production enviroment by implementing monitoring. 
-- Got an hands -on with dealing with a variety of APIs and errors associated especially 422 error.
+- Got hands-on with dealing with a variety of APIs and errors associated especially 422 error.
 - We had some difficulty in installing and using the module generate-rsa-key pair.
 - There were many challenges we faced to make the iTrust application work. Inititally, we had a problem with db.properties that wasn't included in the war file. To fix this issue we understood the whole process of what maven command does to create a war file.
 - Once we had a proper war file we had challanges on deploying iTrust on tomcat. Tomcat was getting destroyed as soon as iTrust was extracted. We figured out that by increasing the size of the droplet and that helped to fix this issue.
