@@ -28,12 +28,15 @@
   with_items:
     -  forever stopall
     -  "forever start agent/index.js {{ ansible_hostname }}"
+  register: forever
 
 - name: Restart redis
   systemd:
     name: redis-server
     state: restarted
   when: ansible_hostname == 'monitor'
+  async: 120
+  poll: 0 
 
 ## Run node bi/www
 - name: Run forever start bin/www

@@ -6,6 +6,7 @@
     update_cache: yes
   become: yes
   when: ansible_hostname == 'monitor' or group_names[0] == 'proxy'
+  register: redis
 
 ## Edit redis.conf
 - name: Change redis ip
@@ -21,4 +22,6 @@
   systemd:
     name: redis-server
     state: restarted
-  when: ansible_hostname == 'monitor' or group_names[0] == 'proxy'
+  when: (ansible_hostname == 'monitor' or group_names[0] == 'proxy')
+  async: 120
+  poll: 0 
