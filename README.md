@@ -94,29 +94,39 @@ Experiences:
 [Screencast Milestone3]()
 
 Experiences:
-- We came to know how to deploy the application on cloud instances instead of the same instance. 
-- We found it interesting to implement firewall in our project.
-- We had some difficulty in installing and using the module generate rsa key pair.
+- Learnt how to deploy applications on cloud and mock a production enviroment by implementing monitoring. 
+- Got an hands -on with dealing with a variety of APIs and errors associated especially 422 error.
+- We had some difficulty in installing and using the module generate-rsa-key pair.
 - There were many challenges we faced to make the iTrust application work. Inititally, we had a problem with db.properties that wasn't included in the war file. To fix this issue we understood the whole process of what maven command does to create a war file.
 - Once we had a proper war file we had challanges on deploying iTrust on tomcat. Tomcat was getting destroyed as soon as iTrust was extracted. We figured out that by increasing the size of the droplet and that helped to fix this issue.
-- Place holder for nginx and checkbox.
-- Place holder for canary.
+- Initially we faced some issues with checkbox where we were setting the environment ariables as desired by the application but it couldn't retrieve it. Finally, we sent the environment variables with the forever command.
+- For canary, we got a better idea into executing web proxy that was shown to us in the Deployment workshop. Got to play around a lot of metrics that were open to be considered for the canary analysis but had to decide on a few that we thought made the most impact.
 
 ### Task 1: Set up ansible/jenkins-server
 - Run the command ```pipeline setup --gh-user <username> --gh-pass <password>```
 
 ### Task 2: Provision instances and monitoring
 - Run the command ```pipeline prod up```. This will provision three instances monitor, itrust, checkbox.
-
+- Droplets created using API on Digital Ocean
 <p align="center">
 <img src ="https://github.ncsu.edu/cscdevops-spring2020/DEVOPS-16/blob/M3/img/digitalocean.PNG" width="600" height="350">
 </p>
 
+- Firewall created using API on Digital Ocean
+<p align="center">
+<img src="https://github.ncsu.edu/cscdevops-spring2020/DEVOPS-16/blob/M3/img/firewall.png" width="600" height="350">
+</p>
+
 ### Task 3: Implement configuration steps for deployment
 - Run the command ```pipeline deploy checkbox.io -i inventory.ini```. This will deploy checkbox.io application on checkbox server.
-
+- /research.html
 <p align="center">
 <img src ="https://github.ncsu.edu/cscdevops-spring2020/DEVOPS-16/blob/M3/img/checkbox_app.PNG" width="600" height="350">
+</p>
+
+- /api/study/listing
+<p align="center">
+<img src ="https://github.ncsu.edu/cscdevops-spring2020/DEVOPS-16/blob/M3/img/api_study_listing.png.PNG" width="600" height="350">
 </p>
 
 - Run the command ```pipeline deploy iTrust -i inventory.ini```. This will first trigger a build for iTrust job and will create a iTrust2.war. Further, it will install tomcat, mysql on the itrust node and then the iTrust war file will be copied and deployed on tomcat server in itrust droplet. 
