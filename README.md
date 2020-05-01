@@ -120,7 +120,7 @@ Experiences:
 
 ### Task 3: Implement configuration steps for deployment
 - Run the command ```pipeline deploy checkbox.io -i inventory.ini```. This will deploy checkbox.io application on checkbox server.
-- /research.html
+- /researchers.html
 <p align="center">
 <img src ="https://github.ncsu.edu/cscdevops-spring2020/DEVOPS-16/blob/M3/img/checkbox_app.PNG" width="600" height="350">
 </p>
@@ -137,5 +137,19 @@ Experiences:
 </p>
 
 ### Task 4: Canary analysis
-- Run the command ```pipeline canary master broken``` for this task.
-- This command will bring up three local VMs the proxy server, green and blue instances. We clone the checkbox.io master on blue and broken on the green instance. We generate load for first 5 minutes on Blue instance and then it generates load on the Green VM for next 5 minutes. For canary to pass three of the four metrics should pass.
+
+- We have set weights for different metrics that we are using to calculate the canary score. According to us the status code was the most important metric affecting the canary score so we assigned it a weight of 4. Similarly we assigned 2 to each of Latency, Current memory load and CPU. Depending on your requirement you can tweak these values to recalculate the canary score. We have used the Mann whitney u test module to calculate the statistical difference in the data coming in from the green and the blue instances.
+
+- ```pipeline canary master broken```
+<p align="center">
+<img src ="https://media.github.ncsu.edu/user/12214/files/60aa9980-8b27-11ea-9e4f-32ff3641dbfa" width="700" height="200">
+</p>
+
+- This command will bring up three local VMs the proxy server, green and blue instances. We clone the checkbox.io-micro-preview master branch on blue and broken branch on the green instance. We generate load for first 5 minutes on Blue instance and then it generates load on the Green VM for next 5 minutes.
+
+- ```pipeline canary master master```
+<p align="center">
+<img src ="https://media.github.ncsu.edu/user/12214/files/2c37dd00-8b29-11ea-9840-cf58462bde14" width="700" height="200">
+</p>
+
+- This command will bring up three local VMs the proxy server, green and blue instances. We clone the checkbox.io-micro-preview master branch on blue as well as on the green instance. We generate load for first 5 minutes on Blue instance and then it generates load on the Green VM for next 5 minutes. 
