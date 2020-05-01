@@ -71,10 +71,11 @@ exports.handler = async argv => {
                      console.log("End of load generation");
                      console.log("*****************************************************************************************************");
                      console.log("Computing Canary Score based on StatusCode, CPU, Memory and Latency metrics using Mann Whitney U Test");
-                     var canaryScore = []
+                     var canaryScore = [];
                      var counterPass = 0;
 
-                     var samplesStatusCode = []
+                     var samplesStatusCode = [];
+                     var weightStatusCode = 4;
                      samplesStatusCode.push((canaryMap.get("BLUE")).get("statusCode"));
                      samplesStatusCode.push((canaryMap.get("GREEN")).get("statusCode"));
                      var usc = mwu.test(samplesStatusCode);
@@ -87,10 +88,11 @@ exports.handler = async argv => {
                      {
                            console.log('Status Code : The difference between data is not significant!');
                            canaryScore.push("PASS");
-                           counterPass++;
+                           counterPass = counterPass + weightStatusCode;
                      }
 
-                     var samplesLatency = []
+                     var samplesLatency = [];
+                     var weightLatency = 2;
                      samplesLatency.push((canaryMap.get("BLUE")).get("latency"));
                      samplesLatency.push((canaryMap.get("GREEN")).get("latency"));
                      var ul = mwu.test(samplesLatency);
@@ -103,10 +105,11 @@ exports.handler = async argv => {
                      {
                            console.log('Latency : The difference between data is not significant!');
                            canaryScore.push("PASS");
-                           counterPass++;
+                           counterPass = counterPass + weightLatency;
                      }
 
-                     var samplesCPU = [] 
+                     var samplesCPU = [];
+                     var weightCPU = 2; 
                      samplesCPU.push((canaryMap.get("BLUE")).get("cpu"));
                      samplesCPU.push((canaryMap.get("GREEN")).get("cpu"));
                      var uc = mwu.test(samplesCPU);
@@ -119,10 +122,11 @@ exports.handler = async argv => {
                      {
                            console.log('CPU : The difference between data is not significant!');
                            canaryScore.push("PASS");   
-                           counterPass++; 
+                           counterPass = counterPass + weightCPU; 
                      }
 
-                     var samplesMemory = [] 
+                     var samplesMemory = [];
+                     var weightMemory = 2; 
                      samplesMemory.push((canaryMap.get("BLUE")).get("memory"));
                      samplesMemory.push((canaryMap.get("GREEN")).get("memory"));
                      var um = mwu.test(samplesMemory);
@@ -135,10 +139,12 @@ exports.handler = async argv => {
                      {
                            console.log('Current Memory : The difference between data is not significant!');
                            canaryScore.push("PASS");   
-                           counterPass++; 
+                           counterPass = counterPass + weightMemory; 
                      }
-                     var pass = (counterPass/canaryScore.length);
+
+                     var pass = (counterPass/10);
                      console.log("Canary Score : " + (pass)*100 + "%");
+
                      if (pass >= 0.7)
                      {
                           console.log(chalk.greenBright('canary passed!')); 

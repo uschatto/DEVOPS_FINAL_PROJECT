@@ -1,13 +1,12 @@
 ---
-- hosts: BLUE:GREEN
+- hosts: proxy
+  roles:
+    - node
+    - redis
+    - proxy_code
 
+- hosts: BLUE:GREEN
   roles:
     - clone_canary
     - node
     - npm_canary
-
-- hosts: proxy
-  roles: 
-    - node
-    - redis
-    - proxy_code
