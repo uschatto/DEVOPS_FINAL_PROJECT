@@ -72,8 +72,6 @@ class DigitalOceanProvider{
 
         if( !response ) return;
 
-        // console.log(response.statusCode);
-        // console.log(typeof(response.body));
         let body = JSON.parse(response.body)
 
         if(response.statusCode == 202)
@@ -95,7 +93,6 @@ class DigitalOceanProvider{
         );
         let key_list = []
         let keyids_list = (JSON.parse(key_response.body))['ssh_keys'];
-        // console.log("SSH Keys ",keyids_list);
         keyids_list.forEach(element => {
           key_list.push(element['id'])
         });
@@ -120,37 +117,26 @@ class DigitalOceanProvider{
         }
         for( let ipv4 of droplet.networks.v4 )
         {
-          // console.log('Ipv4'," ", ipv4.ip_address)
           do_ids[key].push(ipv4.ip_address)
         }
       }
     }
 
     async inventory(do_ids){
-        var data = fs.readFileSync(__dirname+'/../pipeline/inventory.ini','utf-8');
-        // console.log("Data:", data)
+        var data = fs.readFileSync(__dirname+'/../inventory.ini','utf-8');
         let data_lines = data.split('\n')
-        // console.log(data_lines)
         let config_lines = {}
         for (var key in do_ids){
           if (!data_lines.includes('['+key+']'))
             {
-              console.log("Inside IF")
               data_lines.push('['+key+']')
               data_lines.push(do_ids[key][1]+"  ansible_ssh_private_key_file=/bakerx/pipeline/devops  ansible_user=root")
-              data_lines.push('['+key+':vars]')
-              data_lines.push('ansible_ssh_common_args=\'-o StrictHostKeyChecking=no\'')
-              data_lines.push('ansible_python_interpreter=/usr/bin/python3')
             }
           else
             {
-              console.log("Inside Else")
               let index = data_lines.indexOf('['+key+']')
               config_lines = {
                 1:  do_ids[key][1]+"  ansible_ssh_private_key_file=/bakerx/pipeline/devops  ansible_user=root",
-                2: '['+key+':vars]',
-                3: 'ansible_ssh_common_args=\'-o StrictHostKeyChecking=no\'',
-                4: 'ansible_python_interpreter=/usr/bin/python3'
               }
               for(var i = 1; i < 4; i++){
                 if (index + i < data_lines.length){
@@ -165,7 +151,7 @@ class DigitalOceanProvider{
         // console.log("File:",data_lines)
         data = data_lines.join('\n')
         console.log("Data: ",data)
-        fs.writeFileSync(__dirname+'/../pipeline/inventory.ini', data, 'utf-8');
+        fs.writeFileSync(__dirname+'/../inventory.ini', data, 'utf-8');
       }
 
     async create_keypair(){
@@ -294,7 +280,6 @@ class DigitalOceanProvider{
       }).catch( err => 
         console.error(chalk.red(`AddDropletsToFirewall: ${err}`)) 
       );
-      // console.log(response.body)
     }
 
     async is_firewall(){
@@ -364,7 +349,7 @@ async function run() {
 
 async function run_playbook(){
   console.log('Running playbook for control plane')
-  result = sshSync('ansible-playbook /bakerx/pipeline/prod.yml -i /bakerx/pipeline/inventory.ini', 'vagrant@192.168.33.11');
+  result = sshSync('ansible-playbook /bakerx/pipeline/prod.yml -i /bakerx/inventory.ini', 'vagrant@192.168.33.11');
   if( result.error ) { process.exit( result.status ); }
 }
 

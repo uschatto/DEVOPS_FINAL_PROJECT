@@ -17,12 +17,12 @@ exports.builder = yargs => {
         itrustFile: {
             describe: 'Provide the path to the main itrust_deploy.yml',
             type: 'string',
-            default: 'itrust_deploy.yml'
+            default: 'pipeline/itrust_deploy.yml'
         },      
         checkboxFile: {
             describe: 'Provide the path to the main checkbox_deploy.yml',
             type: 'string',
-            default: 'checkbox_deploy.yml'
+            default: 'pipeline/checkbox_deploy.yml'
         },
         inventory: {
             alias: 'i',
@@ -48,7 +48,7 @@ exports.handler = async argv => {
 
 async function run(app, itrustFile, checkboxFile, inventory, vaultpass) {
     
-    let basePath = "/bakerx/pipeline/";
+    let basePath = "/bakerx/";
     let inventoryPath = basePath + inventory;
     let playbook_name = "";
 
