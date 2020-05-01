@@ -10,7 +10,8 @@ set -x
 sudo add-apt-repository ppa:ansible/ansible -y
 sudo apt-get update
 sudo apt-get install ansible -y
+cp /bakerx/pipeline/ansible.cfg ~/
 
 # Ensure security key has proper permissions
-chmod 700 ~/.ssh/mm_rsa
+chmod 600 ~/.ssh/mm_rsa
 
