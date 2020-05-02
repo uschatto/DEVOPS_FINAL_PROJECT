@@ -35,8 +35,8 @@
     name: redis-server
     state: restarted
   when: ansible_hostname == 'monitor'
-  async: 120
-  poll: 0 
+  # async: 120
+  # poll: 0 
 
 ## Run node bi/www
 - name: Run forever start bin/www

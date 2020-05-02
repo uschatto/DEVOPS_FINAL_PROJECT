@@ -23,5 +23,5 @@
     name: redis-server
     state: restarted
   when: (ansible_hostname == 'monitor' or group_names[0] == 'proxy')
-  async: 120
-  poll: 0 
+  # async: 120
+  # poll: 0 

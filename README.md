@@ -92,7 +92,6 @@ Experiences:
 [Checkpoint 1](https://github.ncsu.edu/cscdevops-spring2020/DEVOPS-16/blob/M3/CHECKPOINT.md#checkpoint-1)
 
 [Screencast Milestone3](https://drive.google.com/open?id=1o30GNZy_UZwfymOBS0Szp0mqg-sBnVVF)
-### NOTE: Inventory being used for all the commands is the same which is in the folder /bakerx/pipeline. Name: inventory.ini. There for the `pipeline deploy <app> -i inventory` command, it will take inventory from/bakerx/pipeline. But if you want to use an inventory from that exists in aother folder, please use `-i <path relative to pipeline folder>/inventory.ini`
 
 Experiences:
 - Learnt how to deploy applications on cloud and mock a production enviroment by implementing monitoring. 

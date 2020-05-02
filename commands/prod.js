@@ -123,7 +123,11 @@ class DigitalOceanProvider{
     }
 
     async inventory(do_ids){
-        var data = fs.readFileSync(__dirname+'/../inventory.ini','utf-8');
+        var data = ''
+        if (!fs.existsSync(path.resolve(__dirname+'/../inventory.ini'))){
+          fs.appendFileSync(__dirname+'/../inventory.ini',"");
+        }
+        data = fs.readFileSync(__dirname+'/../inventory.ini','utf-8');
         let data_lines = data.split('\n')
         let config_lines = {}
         for (var key in do_ids){
@@ -135,16 +139,12 @@ class DigitalOceanProvider{
           else
             {
               let index = data_lines.indexOf('['+key+']')
-              config_lines = {
-                1:  do_ids[key][1]+"  ansible_ssh_private_key_file=/bakerx/pipeline/devops  ansible_user=root",
+              config_lines = do_ids[key][1]+"  ansible_ssh_private_key_file=/bakerx/pipeline/devops  ansible_user=root";
+              if (index + 1 < data_lines.length){
+                data_lines[index+1] = config_lines
               }
-              for(var i = 1; i < 4; i++){
-                if (index + i < data_lines.length){
-                  data_lines[index+i] = config_lines[i]
-                }
-                else{
-                  data_lines.push(config_lines[i])
-                }
+              else{
+                data_lines.push(config_lines)
               }
             }
         }
