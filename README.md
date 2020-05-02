@@ -91,7 +91,7 @@ Experiences:
 ## Milestone 3
 [Checkpoint 1](https://github.ncsu.edu/cscdevops-spring2020/DEVOPS-16/blob/M3/CHECKPOINT.md#checkpoint-1)
 
-[Screencast Milestone3](https://drive.google.com/open?id=1o30GNZy_UZwfymOBS0Szp0mqg-sBnVVF)
+[Screencast Milestone3](https://drive.google.com/open?id=1ClZ2sKmViHx4CswIOq-HudsQw9aTmMvn)
 
 Experiences:
 - Learnt how to deploy applications on cloud and mock a production enviroment by implementing monitoring. 
