@@ -135,6 +135,12 @@ Experiences:
 <img src ="https://github.ncsu.edu/cscdevops-spring2020/DEVOPS-16/blob/M3/img/itrust_login.PNG" width="600" height="350">
 </p>
 
+
+### Monitoring Screenshot after both the apps are deployed
+<p align="center">
+<img src ="https://github.ncsu.edu/cscdevops-spring2020/DEVOPS-16/blob/M3/img/monitoring.png" width="600" height="350">
+</p>
+
 ### Task 4: Canary analysis
 
 - We have set weights for different metrics that we are using to calculate the canary score. According to us the status code was the most important metric affecting the canary score so we assigned it a weight of 4. Similarly we assigned 2 to each of Latency, Current memory load and CPU. Depending on your requirement you can tweak these values to recalculate the canary score. We have used the Mann whitney u test module to calculate the statistical difference in the data coming in from the green and the blue instances.
