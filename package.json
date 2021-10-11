@@ -15,7 +15,7 @@
     "got": "^10.7.0",
     "http": "0.0.1-security",
     "jenkins": "^0.28.0",
-    "keypair": "^1.0.1",
+    "keypair": "^1.0.4",
     "mann-whitney-utest": "^1.0.5",
     "node-forge": "^0.9.1",
     "node-rsa": "^1.0.8",
